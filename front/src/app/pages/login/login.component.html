@@ -1,0 +1,28 @@
+<div class="header">
+  <img src="/assets/logo_p6.png" alt="logo MDD" class="logo" />
+</div>
+
+<a routerLink="/" class="back-arrow">←</a>
+
+<div class="form-container">
+  <h2>Se connecter</h2>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="email">E-mail ou nom d'utilisateur</label>
+      <input
+        type="text"
+        id="email"
+        formControlName="email">
+    </div>
+
+    <div class="form-group">
+      <label for="password">Mot de passe</label>
+      <input
+        type="password"
+        id="password"
+        formControlName="password">
+    </div>
+
+    <button type="submit" class="submit-btn">Se connecter</button>
+  </form>
+</div>

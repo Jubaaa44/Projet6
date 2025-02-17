@@ -1,0 +1,72 @@
+// login.component.scss
+  .header {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+
+    .logo {
+      max-width: 80px; // Réduction de la taille du logo
+      margin: 0; // Suppression du centrage automatique
+    }
+  }
+  a {
+    margin-left: 1rem; // Ajoute de l'espace entre la flèche et le bord gauche
+    font-size: 18px; // Augmente légèrement la taille si nécessaire
+    text-decoration: none; // Supprime le soulignement par défaut
+    color: #333; // Couleur sobre pour la flèche
+
+    &:hover {
+      color: #6C63FF; // Changement de couleur au survol
+    }
+  }
+
+
+.form-container {
+  padding: 2rem;
+  max-width: 400px;
+  margin: 0 auto;
+
+  h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+
+      &:focus {
+        outline: none;
+        border-color: #6C63FF;
+      }
+    }
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #6C63FF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+
+    &:hover {
+      background-color: darken(#6C63FF, 5%);
+    }
+  }
+}
