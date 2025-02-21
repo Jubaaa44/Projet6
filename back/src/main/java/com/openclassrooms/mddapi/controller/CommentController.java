@@ -11,7 +11,7 @@ import com.openclassrooms.mddapi.security.UserDetailsImpl;
 
 @RestController
 @RequestMapping("/api/comments")
-@CrossOrigin(origins = "*")
+@CrossOrigin 
 public class CommentController {
 
     @Autowired

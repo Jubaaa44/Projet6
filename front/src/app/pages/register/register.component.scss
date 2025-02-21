@@ -1,0 +1,127 @@
+// Style direct et explicite pour register.component.scss
+:host {
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    width: 100%;
+
+    .logo {
+      max-width: 100px;
+      margin: 0;
+    }
+  }
+
+  .back-arrow {
+    display: inline-block;
+    margin-left: 1rem;
+    font-size: 18px;
+    text-decoration: none;
+    color: #333;
+
+    &:hover {
+      color: #6C63FF;
+    }
+  }
+
+  .form-container {
+    padding: 2rem;
+    max-width: 320px;
+    margin: 0 auto;
+
+    h2 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 14px;
+      }
+
+      input {
+        width: 100%;
+        max-width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+        box-sizing: border-box;
+
+        &:focus {
+          outline: none;
+          border-color: #6C63FF;
+        }
+      }
+    }
+
+    .submit-btn {
+      width: 100%;
+      max-width: 100%;
+      padding: 0.75rem;
+      background-color: #6C63FF;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      box-sizing: border-box;
+
+      &:hover {
+        background-color: darken(#6C63FF, 5%);
+      }
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .header {
+      justify-content: center;
+      padding: 1.5rem 0.75rem;
+      border-bottom: none;
+
+      .logo {
+        max-width: 320px;
+        margin: 0 auto;
+      }
+    }
+
+    .back-arrow {
+      position: absolute;
+      top: 1.5rem;
+      left: 1rem;
+      margin-left: 0;
+    }
+
+    .form-container {
+      padding: 1.5rem 1rem;
+
+      h2 {
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+      }
+
+      .form-group {
+        margin-bottom: 1rem;
+
+        label {
+          font-size: 13px;
+        }
+
+        input {
+          padding: 0.6rem;
+          font-size: 15px;
+        }
+      }
+
+      .submit-btn {
+        padding: 0.7rem;
+      }
+    }
+  }
+}

@@ -18,7 +18,7 @@ import com.openclassrooms.mddapi.service.UserService;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*")
+@CrossOrigin
 public class UserController {
 
     @Autowired

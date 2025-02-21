@@ -11,7 +11,7 @@ import com.openclassrooms.mddapi.security.UserDetailsImpl;
 
 @RestController
 @RequestMapping("/api/subjects")
-@CrossOrigin(origins = "*")
+@CrossOrigin
 public class SubjectController {
 
     @Autowired

@@ -31,7 +31,17 @@ public class PostService {
     }
     
     public List<Post> getAllPosts() {
-        return postRepository.findAll();
+        try {
+            System.out.println("Tentative de récupération de tous les posts");
+            List<Post> posts = postRepository.findAll();
+            System.out.println("Nombre de posts trouvés : " + posts.size());
+            posts.forEach(post -> System.out.println("Post trouvé : " + post.getId() + " - " + post.getTitle()));
+            return posts;
+        } catch (Exception e) {
+            System.err.println("Erreur lors de la récupération des posts : " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
     
     public List<Post> getPostsByAuthor(Long authorId) {

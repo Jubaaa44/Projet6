@@ -1,4 +1,5 @@
 package com.openclassrooms.mddapi.controller;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,14 +12,25 @@ import com.openclassrooms.mddapi.security.UserDetailsImpl;
 
 @RestController
 @RequestMapping("/api/posts")
-@CrossOrigin(origins = "*")
+@CrossOrigin  
 public class PostController {
-
     @Autowired
     private PostService postService;
-
     @Autowired
     private UserService userService;
+
+    // Ajouter cet endpoint pour récupérer tous les posts
+    @GetMapping
+    public ResponseEntity<?> getAllPosts() {
+        try {
+            List<Post> posts = postService.getAllPosts();
+            System.out.println("Posts récupérés avec succès, nombre : " + posts.size());
+            return ResponseEntity.ok(posts);
+        } catch (Exception e) {
+            System.err.println("Erreur dans le controller : " + e.getMessage());
+            return ResponseEntity.status(500).body("Erreur lors de la récupération des posts : " + e.getMessage());
+        }
+    }
 
     // Récupérer le fil d'actualité (posts des sujets suivis)
     @GetMapping("/feed")

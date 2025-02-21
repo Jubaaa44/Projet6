@@ -1,0 +1,84 @@
+<div class="articles-container">
+  <header class="articles-header">
+    <div class="logo-container">
+      <img src="/assets/logo_p6.png" alt="logo MDD" class="logo" />
+    </div>
+
+    <nav class="navigation">
+      <a href="#" class="nav-link active">Articles</a>
+      <a href="#" class="nav-link">Thèmes</a>
+    </nav>
+
+    <div class="profile-icon">
+      <img src="/assets/utilisateur.png" alt="Profile" />
+    </div>
+
+    <!-- Hamburger menu pour mobile, avec un événement de clic -->
+    <div class="hamburger-menu" (click)="toggleMobileMenu()">
+      <div class="menu-icon">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Overlay et menu mobile -->
+  <div class="mobile-menu-overlay" (click)="closeMobileMenu()"></div>
+  <div class="mobile-menu">
+    <div class="mobile-menu-header">
+      <div class="close-menu" (click)="closeMobileMenu()">×</div>
+    </div>
+    <nav class="mobile-navigation">
+      <a href="#" class="nav-link active">Articles</a>
+      <a href="#" class="nav-link">Thèmes</a>
+    </nav>
+    <a href="#" class="mobile-profile-icon">
+      <img src="/assets/utilisateur.png" alt="Profile" />
+    </a>
+  </div>
+
+  <div class="content-container">
+    <div class="actions-bar">
+      <button class="create-btn">Créer un article</button>
+      <div class="sort-dropdown">
+        <span>Trier par</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </div>
+    </div>
+
+    <div class="articles-grid">
+      <!-- Indicateur de chargement -->
+      <div class="loading-container" *ngIf="isLoading">
+        <div class="spinner"></div>
+        <p>Chargement des articles...</p>
+      </div>
+
+      <!-- Message d'erreur -->
+      <div class="error-container" *ngIf="error">
+        <p>Une erreur est survenue lors du chargement des articles.</p>
+        <button (click)="fetchPosts()" class="retry-btn">Réessayer</button>
+      </div>
+
+      <!-- Message si aucun article -->
+      <div class="empty-container" *ngIf="!isLoading && !error && posts.length === 0">
+        <p>Aucun article n'a été trouvé.</p>
+        <button (click)="createPost()" class="create-btn">Créer votre premier article</button>
+      </div>
+
+      <!-- Liste des articles -->
+<div class="article-card" *ngFor="let post of posts" (click)="viewPost(post.id)">
+  <h3 class="article-title">{{ post.title }}</h3>
+  <div class="article-meta">
+    <span class="article-date">{{ formatDate(post.date) }}</span> <!-- changé de createdAt à date -->
+    <span class="article-author">Auteur #{{ post.author_id }}</span> <!-- changé de author.username à author_id -->
+  </div>
+  <p class="article-excerpt">
+    {{ getExcerpt(post.content) }} <!-- changé de article.content à post.content -->
+  </p>
+</div>
+    </div>
+  </div>
+</div>
