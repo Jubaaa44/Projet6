@@ -1,95 +1,101 @@
 package com.openclassrooms.mddapi.controller;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import com.openclassrooms.mddapi.dto.PostDTO;
+import com.openclassrooms.mddapi.mapper.PostMapper;
 import com.openclassrooms.mddapi.model.Post;
 import com.openclassrooms.mddapi.service.PostService;
 import com.openclassrooms.mddapi.service.UserService;
 import com.openclassrooms.mddapi.security.UserDetailsImpl;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/posts")
-@CrossOrigin  
+@CrossOrigin
 public class PostController {
+
     @Autowired
     private PostService postService;
+    
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private PostMapper postMapper;
 
-    // Ajouter cet endpoint pour récupérer tous les posts
-    @GetMapping
-    public ResponseEntity<?> getAllPosts() {
-        try {
-            List<Post> posts = postService.getAllPosts();
-            System.out.println("Posts récupérés avec succès, nombre : " + posts.size());
-            return ResponseEntity.ok(posts);
-        } catch (Exception e) {
-            System.err.println("Erreur dans le controller : " + e.getMessage());
-            return ResponseEntity.status(500).body("Erreur lors de la récupération des posts : " + e.getMessage());
-        }
-    }
-
-    // Récupérer le fil d'actualité (posts des sujets suivis)
     @GetMapping("/feed")
-    public ResponseEntity<?> getFeed() {
+    public ResponseEntity<List<PostDTO>> getFeed() {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
             .getAuthentication().getPrincipal();
-        return ResponseEntity.ok(postService.getFeedForUser(userDetails.getId()));
+        List<Post> posts = postService.getFeedForUser(userDetails.getId());
+        return ResponseEntity.ok(posts.stream()
+            .map(postMapper::toDto)
+            .collect(Collectors.toList()));
     }
 
-    // Créer un nouvel article
     @PostMapping
-    public ResponseEntity<?> createPost(@RequestBody Post post) {
+    public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
             .getAuthentication().getPrincipal();
+            
+        Post post = postMapper.toEntity(postDTO);
         post.setAuthor(userService.getUserById(userDetails.getId()));
-        return ResponseEntity.ok(postService.createPost(post));
+        
+        Post savedPost = postService.createPost(post);
+        return ResponseEntity.ok(postMapper.toDto(savedPost));
     }
 
-    // Récupérer un article spécifique
     @GetMapping("/{postId}")
-    public ResponseEntity<?> getPost(@PathVariable Long postId) {
-        return ResponseEntity.ok(postService.getPostById(postId));
+    public ResponseEntity<PostDTO> getPost(@PathVariable Long postId) {
+        Post post = postService.getPostById(postId);
+        return ResponseEntity.ok(postMapper.toDto(post));
     }
 
-    // Récupérer tous les articles d'un sujet
     @GetMapping("/subject/{subjectId}")
-    public ResponseEntity<?> getPostsBySubject(@PathVariable Long subjectId) {
-        return ResponseEntity.ok(postService.getPostsBySubject(subjectId));
+    public ResponseEntity<List<PostDTO>> getPostsBySubject(@PathVariable Long subjectId) {
+        List<Post> posts = postService.getPostsBySubject(subjectId);
+        return ResponseEntity.ok(posts.stream()
+            .map(postMapper::toDto)
+            .collect(Collectors.toList()));
     }
 
-    // Récupérer tous les articles d'un utilisateur
     @GetMapping("/user/{userId}")
-    public ResponseEntity<?> getPostsByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(postService.getPostsByAuthor(userId));
+    public ResponseEntity<List<PostDTO>> getPostsByUser(@PathVariable Long userId) {
+        List<Post> posts = postService.getPostsByAuthor(userId);
+        return ResponseEntity.ok(posts.stream()
+            .map(postMapper::toDto)
+            .collect(Collectors.toList()));
     }
 
-    // Modifier un article
     @PutMapping("/{postId}")
-    public ResponseEntity<?> updatePost(@PathVariable Long postId, @RequestBody Post postDetails) {
+    public ResponseEntity<?> updatePost(@PathVariable Long postId, @RequestBody PostDTO postDTO) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
             .getAuthentication().getPrincipal();
-        // Vérifier que l'utilisateur est l'auteur
+            
         Post existingPost = postService.getPostById(postId);
         if (!existingPost.getAuthor().getId().equals(userDetails.getId())) {
             return ResponseEntity.badRequest().body("Not authorized to update this post");
         }
-        return ResponseEntity.ok(postService.updatePost(postId, postDetails));
+
+        Post post = postMapper.toEntity(postDTO);
+        Post updatedPost = postService.updatePost(postId, post);
+        return ResponseEntity.ok(postMapper.toDto(updatedPost));
     }
 
-    // Supprimer un article
     @DeleteMapping("/{postId}")
     public ResponseEntity<?> deletePost(@PathVariable Long postId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
             .getAuthentication().getPrincipal();
-        // Vérifier que l'utilisateur est l'auteur
+            
         Post post = postService.getPostById(postId);
         if (!post.getAuthor().getId().equals(userDetails.getId())) {
             return ResponseEntity.badRequest().body("Not authorized to delete this post");
         }
+        
         postService.deletePost(postId);
         return ResponseEntity.ok().build();
     }

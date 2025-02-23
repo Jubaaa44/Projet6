@@ -4,10 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import com.openclassrooms.mddapi.dto.SubjectDTO;
+import com.openclassrooms.mddapi.mapper.SubjectMapper;
 import com.openclassrooms.mddapi.model.Subject;
 import com.openclassrooms.mddapi.service.SubjectService;
 import com.openclassrooms.mddapi.service.UserService;
 import com.openclassrooms.mddapi.security.UserDetailsImpl;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/subjects")
@@ -20,9 +24,15 @@ public class SubjectController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private SubjectMapper subjectMapper;
+
     @GetMapping
-    public ResponseEntity<?> getAllSubjects() {
-        return ResponseEntity.ok(subjectService.getAllSubjects());
+    public ResponseEntity<List<SubjectDTO>> getAllSubjects() {
+        List<Subject> subjects = subjectService.getAllSubjects();
+        return ResponseEntity.ok(subjects.stream()
+            .map(subjectMapper::toDto)
+            .collect(Collectors.toList()));
     }
 
     @PostMapping("/{subjectId}/subscribe")
@@ -42,7 +52,8 @@ public class SubjectController {
     }
 
     @GetMapping("/{subjectId}")
-    public ResponseEntity<?> getSubject(@PathVariable Long subjectId) {
-        return ResponseEntity.ok(subjectService.getSubjectById(subjectId));
+    public ResponseEntity<SubjectDTO> getSubject(@PathVariable Long subjectId) {
+        Subject subject = subjectService.getSubjectById(subjectId);
+        return ResponseEntity.ok(subjectMapper.toDto(subject));
     }
 }

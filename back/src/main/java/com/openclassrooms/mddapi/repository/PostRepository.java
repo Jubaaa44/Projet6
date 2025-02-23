@@ -10,6 +10,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByAuthorId(Long authorId);
     List<Post> findBySubjectId(Long subjectId);
     
-    @Query("SELECT p FROM Post p WHERE p.subject IN (SELECT s FROM User u JOIN u.subscriptions s WHERE u.id = :userId) ORDER BY p.date DESC")
+    /* @Query("SELECT p FROM Post p WHERE p.subject IN (SELECT s FROM User u JOIN u.subscriptions s WHERE u.id = :userId) ORDER BY p.date DESC")
+    List<Post> findFeedByUserId(@Param("userId") Long userId);
+    */
+    @Query("SELECT p FROM Post p ORDER BY p.date DESC")
     List<Post> findFeedByUserId(@Param("userId") Long userId);
 }

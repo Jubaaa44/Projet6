@@ -13,7 +13,7 @@
       <img src="/assets/utilisateur.png" alt="Profile" />
     </div>
 
-    <!-- Hamburger menu pour mobile, avec un événement de clic -->
+    <!-- Hamburger menu pour mobile -->
     <div class="hamburger-menu" (click)="toggleMobileMenu()">
       <div class="menu-icon">
         <span></span>
@@ -32,10 +32,10 @@
     <nav class="mobile-navigation">
       <a href="#" class="nav-link active">Articles</a>
       <a href="#" class="nav-link">Thèmes</a>
+      <a href="#" class="mobile-profile-icon">
+        <img src="/assets/utilisateur.png" alt="Profile" />
+      </a>
     </nav>
-    <a href="#" class="mobile-profile-icon">
-      <img src="/assets/utilisateur.png" alt="Profile" />
-    </a>
   </div>
 
   <div class="content-container">
@@ -58,7 +58,7 @@
 
       <!-- Message d'erreur -->
       <div class="error-container" *ngIf="error">
-        <p>Une erreur est survenue lors du chargement des articles.</p>
+        <p>{{ errorMessage }}</p>
         <button (click)="fetchPosts()" class="retry-btn">Réessayer</button>
       </div>
 
@@ -69,14 +69,15 @@
       </div>
 
       <!-- Liste des articles -->
+<!-- Liste des articles -->
 <div class="article-card" *ngFor="let post of posts" (click)="viewPost(post.id)">
   <h3 class="article-title">{{ post.title }}</h3>
   <div class="article-meta">
-    <span class="article-date">{{ formatDate(post.date) }}</span> <!-- changé de createdAt à date -->
-    <span class="article-author">Auteur #{{ post.author_id }}</span> <!-- changé de author.username à author_id -->
+    <span class="article-date">{{ formatDate(post.date) }}</span>
+    <span class="article-author">{{ post.authorUsername }}</span>
   </div>
   <p class="article-excerpt">
-    {{ getExcerpt(post.content) }} <!-- changé de article.content à post.content -->
+    {{ getExcerpt(post.content) }}
   </p>
 </div>
     </div>

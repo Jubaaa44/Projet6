@@ -12,10 +12,11 @@ export class PostService {
 
   constructor(private http: HttpClient) {}
 
-  // Récupérer tous les posts
+  // Récupérer tous les posts via le feed
   getPosts(): Observable<Post[]> {
-    console.log('Tentative de récupération des posts depuis:', this.apiUrl);
-    return this.http.get<Post[]>(this.apiUrl).pipe(
+    const feedUrl = `${this.apiUrl}/feed`;
+    console.log('Tentative de récupération des posts depuis:', feedUrl);
+    return this.http.get<Post[]>(feedUrl).pipe(
       tap(posts => console.log('Posts récupérés:', posts)),
       catchError(error => {
         console.error('Erreur lors de la récupération des posts:', error);

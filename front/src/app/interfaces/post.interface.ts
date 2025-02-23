@@ -3,6 +3,9 @@ export interface Post {
   title: string;
   content: string;
   date: string;
-  author_id: number;
-  subject_id: number;
+  authorId: number;
+  authorUsername: string;
+  subjectId: number;
+  subjectName: string;
+  comments?: any[];  // Si on utilise les commentaires
 }
