@@ -153,6 +153,8 @@
   .mobile-navigation {
     display: flex;
     flex-direction: column;
+    height: calc(100vh - 60px);
+    position: relative;
     padding: 1.5rem 1rem;
 
     .nav-link {
@@ -173,15 +175,22 @@
     }
 
     .mobile-profile-icon {
-      margin-top: auto;
-      text-decoration: none;
+      position: absolute;
+      bottom: 60px;
+      right: 20px;
+      margin: 0;
+      padding: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
-      padding: 1rem 0;
+      justify-content: center;
+      background-color: #f0f0f0;
 
       img {
-        width: 36px;
-        height: 36px;
+        width: 30px;
+        height: 30px;
         border-radius: 50%;
         object-fit: cover;
       }
@@ -311,7 +320,7 @@
     font-size: 0.9rem;
 
     .article-date {
-      margin-right: 2rem; // Espace significatif entre la date et l'auteur
+      margin-right: 2rem;
     }
   }
 
@@ -325,5 +334,97 @@
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .articles-header {
+    padding: 0.5rem 1rem;
+
+    .navigation {
+      display: none;
+    }
+
+    .profile-icon {
+      display: none;
+    }
+
+    .hamburger-menu {
+      display: block;
+    }
+
+    .logo-container .logo {
+      max-width: 60px;
+    }
+  }
+
+  .content-container {
+    padding: 1rem;
+  }
+
+  .actions-bar {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+
+    .create-btn {
+      width: 50%;
+      padding: 0.75rem;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .sort-dropdown {
+      justify-content: center;
+    }
+  }
+
+  .articles-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .article-card {
+    padding: 1rem;
+
+    .article-title {
+      font-size: 1.1rem;
+    }
+
+    .article-meta {
+      font-size: 0.85rem;
+    }
+
+    .article-excerpt {
+      font-size: 0.9rem;
+    }
+  }
+
+  .mobile-menu-overlay.active {
+    display: block;
+  }
+
+  .mobile-menu.active {
+    display: block;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .content-container {
+    padding: 0.75rem;
+  }
+
+  .article-card {
+    border-radius: 6px;
+
+    .article-meta {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
+
+      .article-date {
+        margin-right: 0;
+      }
+    }
   }
 }
