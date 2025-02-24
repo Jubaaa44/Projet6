@@ -10,6 +10,8 @@ import com.openclassrooms.mddapi.model.Comment;
 import com.openclassrooms.mddapi.service.CommentService;
 import com.openclassrooms.mddapi.service.UserService;
 import com.openclassrooms.mddapi.security.UserDetailsImpl;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,8 +31,12 @@ public class CommentController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
             .getAuthentication().getPrincipal();
         
+        // Il faut définir l'authorId avant la création
         commentDTO.setAuthorId(userDetails.getId());
-        return ResponseEntity.ok(commentService.createComment(postId, commentDTO));
+        commentDTO.setDate(LocalDateTime.now()); // On peut aussi définir la date ici
+
+        CommentDTO createdComment = commentService.createComment(postId, commentDTO);
+        return ResponseEntity.ok(createdComment);
     }
 
     @GetMapping("/post/{postId}")

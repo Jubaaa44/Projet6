@@ -1,0 +1,102 @@
+<div class="post-detail-container">
+  <!-- En-tête avec logo et navigation -->
+  <header class="articles-header">
+    <div class="logo-container">
+      <a routerLink="/articles">
+        <img src="/assets/logo_p6.png" alt="logo MDD" class="logo" />
+      </a>
+    </div>
+
+    <nav class="navigation">
+      <a routerLink="/articles" routerLinkActive="active" class="nav-link">Articles</a>
+      <a routerLink="/themes" routerLinkActive="active" class="nav-link">Thèmes</a>
+    </nav>
+
+    <div class="profile-icon">
+      <img src="/assets/utilisateur.png" alt="Profile" />
+    </div>
+
+    <div class="hamburger-menu" (click)="toggleMobileMenu()">
+      <div class="menu-icon">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Overlay et menu mobile -->
+  <div class="mobile-menu-overlay" [class.active]="isMobileMenuOpen" (click)="closeMobileMenu()"></div>
+  <div class="mobile-menu" [class.active]="isMobileMenuOpen">
+    <div class="mobile-menu-header">
+      <div class="close-menu" (click)="closeMobileMenu()">×</div>
+    </div>
+    <nav class="mobile-navigation">
+      <a routerLink="/articles" routerLinkActive="active" class="nav-link">Articles</a>
+      <a routerLink="/themes" routerLinkActive="active" class="nav-link">Thèmes</a>
+      <a href="#" class="mobile-profile-icon">
+        <img src="/assets/utilisateur.png" alt="Profile" />
+      </a>
+    </nav>
+  </div>
+
+  <!-- Contenu principal -->
+  <div class="content-container">
+    <!-- Indicateur de chargement -->
+    <div class="loading-container" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Chargement de l'article...</p>
+    </div>
+
+    <!-- Message d'erreur -->
+    <div class="error-container" *ngIf="error">
+      <p>{{ errorMessage }}</p>
+      <button (click)="loadPost(postId)" class="retry-btn">Réessayer</button>
+    </div>
+
+    <!-- Contenu de l'article -->
+    <ng-container *ngIf="!isLoading && !error && post">
+      <div class="back-title">
+        <a routerLink="/articles" class="back-button">←</a>
+        <h1 class="post-title">{{ post.title }}</h1>
+      </div>
+
+      <div class="post-meta">
+        <span class="post-date">{{ post.date | date:'dd/MM/yyyy' }}</span>
+        <span class="post-author">{{ post.authorUsername }}</span>
+        <span class="post-theme" *ngIf="post.theme">{{ post.theme }}</span>
+      </div>
+
+      <div class="post-content">
+        {{ post.content }}
+      </div>
+
+      <!-- Section commentaires -->
+      <div class="comments-section">
+        <h3>Commentaires</h3>
+
+        <div class="comments-list">
+          <div class="comment" *ngFor="let comment of comments">
+            <span class="comment-username">{{ comment.authorUsername }}</span>
+            <p class="comment-content">{{ comment.content }}</p>
+          </div>
+        </div>
+
+        <div class="comment-form">
+          <span class="current-username">{{ currentUser?.username }}</span>
+          <textarea
+            placeholder="Écrivez votre commentaire"
+            [(ngModel)]="newComment"
+            rows="3">
+          </textarea>
+          <button class="send-comment" [disabled]="isSubmittingComment" (click)="submitComment()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>

@@ -9,8 +9,10 @@ import com.openclassrooms.mddapi.exception.ResourceNotFoundException;
 import com.openclassrooms.mddapi.mapper.CommentMapper;
 import com.openclassrooms.mddapi.model.Comment;
 import com.openclassrooms.mddapi.model.Post;
+import com.openclassrooms.mddapi.model.User;
 import com.openclassrooms.mddapi.repository.CommentRepository;
 import com.openclassrooms.mddapi.repository.PostRepository;
+import com.openclassrooms.mddapi.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,14 +24,17 @@ public class CommentService {
     
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
+    private final UserRepository userRepository; // Ajoutez cette dépendance
     private final CommentMapper commentMapper;
     
     @Autowired
     public CommentService(CommentRepository commentRepository, 
                          PostRepository postRepository,
+                         UserRepository userRepository,
                          CommentMapper commentMapper) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
+        this.userRepository = userRepository;
         this.commentMapper = commentMapper;
     }
     
@@ -37,9 +42,12 @@ public class CommentService {
         Post post = postRepository.findById(postId)
             .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
             
+        User author = userRepository.findById(commentDTO.getAuthorId())
+            .orElseThrow(() -> new ResourceNotFoundException("Author not found"));
+            
         Comment comment = commentMapper.toEntity(commentDTO);
         comment.setPost(post);
-        comment.setDate(LocalDateTime.now());
+        comment.setAuthor(author);
         
         Comment savedComment = commentRepository.save(comment);
         return commentMapper.toDto(savedComment);

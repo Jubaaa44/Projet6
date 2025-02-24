@@ -16,6 +16,7 @@ public class SubjectMapper {
         SubjectDTO dto = new SubjectDTO();
         dto.setId(subject.getId());
         dto.setName(subject.getName());
+        dto.setDescription(subject.getDescription());
         
         if (subject.getPosts() != null) {
             dto.setPostIds(subject.getPosts().stream()
@@ -42,6 +43,7 @@ public class SubjectMapper {
         Subject subject = new Subject();
         subject.setId(dto.getId());
         subject.setName(dto.getName());
+        subject.setDescription(dto.getDescription());
         return subject;
     }
 }

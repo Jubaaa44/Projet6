@@ -1,10 +1,10 @@
 -- Insertion des sujets
-INSERT INTO subjects (name) VALUES 
-('Java'),
-('Spring'),
-('Angular'),
-('TypeScript'),
-('Git');
+INSERT INTO subjects (name, description) VALUES 
+('Java', 'Ce sujet traite du langage Java'),
+('Spring', 'Ce sujet traite du framework Spring'),
+('Angular', 'Ce sujet traite du framework Angular'),
+('TypeScript', 'Ce sujet traite du langage TypeScript'),
+('Git', 'Ce sujet traite du versionning avec Git');
 
 -- Insertion des utilisateurs
 INSERT INTO users (email, password, username) VALUES 

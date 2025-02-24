@@ -7,6 +7,7 @@ import java.util.List;
 public class SubjectDTO {
     private Long id;
     private String name;
+    private String description;
     private List<Long> postIds;
     private List<Long> subscriberIds;
     private int subscriberCount;

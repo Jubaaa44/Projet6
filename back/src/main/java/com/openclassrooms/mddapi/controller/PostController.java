@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import com.openclassrooms.mddapi.dto.PostDTO;
 import com.openclassrooms.mddapi.mapper.PostMapper;
 import com.openclassrooms.mddapi.model.Post;
+import com.openclassrooms.mddapi.model.Subject;
 import com.openclassrooms.mddapi.service.PostService;
+import com.openclassrooms.mddapi.service.SubjectService;
 import com.openclassrooms.mddapi.service.UserService;
 import com.openclassrooms.mddapi.security.UserDetailsImpl;
 import java.util.List;
@@ -23,6 +25,9 @@ public class PostController {
     
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private SubjectService subjectService;
     
     @Autowired
     private PostMapper postMapper;
@@ -41,11 +46,23 @@ public class PostController {
     public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
             .getAuthentication().getPrincipal();
-            
+        
+        // Mapping du DTO vers l'entité
         Post post = postMapper.toEntity(postDTO);
+        
+        // Association de l'auteur
         post.setAuthor(userService.getUserById(userDetails.getId()));
         
+        // Association du sujet - C'EST ICI LA CORRECTION PRINCIPALE
+        if (postDTO.getSubjectId() != null) {
+            Subject subject = subjectService.getSubjectById(postDTO.getSubjectId());
+            post.setSubject(subject);
+        }
+        
+        // Sauvegarde du post
         Post savedPost = postService.createPost(post);
+        
+        // Conversion en DTO pour la réponse
         return ResponseEntity.ok(postMapper.toDto(savedPost));
     }
 
@@ -82,6 +99,10 @@ public class PostController {
         }
 
         Post post = postMapper.toEntity(postDTO);
+        // Conserver le sujet et l'auteur lors d'une mise à jour
+        post.setAuthor(existingPost.getAuthor());
+        post.setSubject(existingPost.getSubject());
+        
         Post updatedPost = postService.updatePost(postId, post);
         return ResponseEntity.ok(postMapper.toDto(updatedPost));
     }

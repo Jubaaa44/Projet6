@@ -16,6 +16,9 @@ public class Subject {
     @Column(nullable = false, unique = true)
     private String name;
     
+    @Column(nullable = false, unique = false)
+    private String description;
+    
     // Articles liés à ce sujet
     @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL)
     private List<Post> posts;

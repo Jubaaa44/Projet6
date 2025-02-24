@@ -14,9 +14,13 @@ import { AuthService } from './services/auth.service';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { AuthGuard } from './guards/auth.guard';
 import { PostsComponent } from './pages/posts/posts.component';
+import { SubjectsComponent } from './pages/subjects/subjects.component';
+import { PostDetailComponent } from './pages/post-detail/post-detail.component';
+import { FormsModule } from '@angular/forms';
+import { CreatePostComponent } from './pages/create-post/create-post.component';
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent, LoginComponent, RegisterComponent, PostsComponent],
+  declarations: [AppComponent, HomeComponent, LoginComponent, RegisterComponent, PostsComponent, SubjectsComponent, PostDetailComponent, CreatePostComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -24,7 +28,8 @@ import { PostsComponent } from './pages/posts/posts.component';
     MatButtonModule,
     ReactiveFormsModule,
     HttpClientModule,
-    CommonModule
+    CommonModule,
+    FormsModule
   ],
   providers: [
     AuthService,

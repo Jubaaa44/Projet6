@@ -17,6 +17,7 @@ public class UserMapper {
         dto.setId(user.getId());
         dto.setEmail(user.getEmail());
         dto.setUsername(user.getUsername());
+        // Ne pas mapper le password dans le DTO pour des raisons de sécurité
         
         if (user.getSubscriptions() != null) {
             dto.setSubscriptionIds(user.getSubscriptions().stream()
@@ -47,6 +48,7 @@ public class UserMapper {
         user.setId(dto.getId());
         user.setEmail(dto.getEmail());
         user.setUsername(dto.getUsername());
+        user.setPassword(dto.getPassword()); // Ajout du mapping du password
         return user;
     }
 }

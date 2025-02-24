@@ -8,4 +8,5 @@ export interface Post {
   subjectId: number;
   subjectName: string;
   comments?: any[];  // Si on utilise les commentaires
+  theme?: string;
 }

@@ -48,7 +48,7 @@ export class PostsComponent implements OnInit {
 
   viewPost(id: number): void {
     this.router.navigate(['/post', id]);
-  }
+}
 
   toggleMobileMenu(): void {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
