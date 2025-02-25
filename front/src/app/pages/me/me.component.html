@@ -1,0 +1,97 @@
+<div class="profile-container">
+  <!-- En-tête avec logo et navigation -->
+  <header class="articles-header">
+    <div class="logo-container">
+      <a routerLink="/articles">
+        <img src="/assets/logo_p6.png" alt="logo MDD" class="logo" />
+      </a>
+    </div>
+
+    <nav class="navigation">
+      <a routerLink="/articles" routerLinkActive="active" class="nav-link">Articles</a>
+      <a routerLink="/themes" routerLinkActive="active" class="nav-link">Thèmes</a>
+    </nav>
+
+    <div class="profile-icon">
+      <img src="/assets/utilisateur.png" alt="Profile" />
+    </div>
+
+    <div class="hamburger-menu" (click)="toggleMobileMenu()">
+      <div class="menu-icon">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Overlay et menu mobile -->
+  <div class="mobile-menu-overlay" [class.active]="isMobileMenuOpen" (click)="closeMobileMenu()"></div>
+  <div class="mobile-menu" [class.active]="isMobileMenuOpen">
+    <div class="mobile-menu-header">
+      <div class="close-menu" (click)="closeMobileMenu()">×</div>
+    </div>
+    <nav class="mobile-navigation">
+      <a routerLink="/articles" routerLinkActive="active" class="nav-link">Articles</a>
+      <a routerLink="/themes" routerLinkActive="active" class="nav-link">Thèmes</a>
+      <a href="#" class="mobile-profile-icon">
+        <img src="/assets/utilisateur.png" alt="Profile" />
+      </a>
+    </nav>
+  </div>
+
+  <!-- Contenu principal -->
+  <div class="content-container">
+    <h1 class="section-title">Profil utilisateur</h1>
+
+    <!-- Informations utilisateur -->
+    <div class="profile-form">
+      <div class="form-group">
+        <input
+          type="text"
+          class="form-control"
+          [value]="currentUser?.username || ''"
+          placeholder="Nom d'utilisateur"
+          (input)="updateUsername($event)">
+      </div>
+
+      <div class="form-group">
+        <input
+          type="email"
+          class="form-control"
+          [value]="currentUser?.email || ''"
+          placeholder="Email"
+          (input)="updateEmail($event)">
+      </div>
+
+      <button class="save-btn" (click)="saveProfile()" [disabled]="isSaving">
+        Sauvegarder
+      </button>
+    </div>
+
+    <div class="logout-section">
+      <button class="logout-btn" (click)="logout()">Se déconnecter</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Section Abonnements -->
+    <h2 class="section-title">Abonnements</h2>
+
+    <div class="subscriptions-list" *ngIf="subscriptions && subscriptions.length > 0">
+      <div class="subscription-card" *ngFor="let subscription of subscriptions">
+        <div class="subscription-content">
+          <h3 class="subscription-title">{{ subscription.name }}</h3>
+          <p class="subscription-description">{{ subscription.description }}</p>
+        </div>
+        <button class="unsubscribe-btn" (click)="unsubscribe(subscription.id)">
+          Se désabonner
+        </button>
+      </div>
+    </div>
+
+    <div class="empty-message" *ngIf="!subscriptions || subscriptions.length === 0">
+      <p>Vous n'êtes abonné à aucun thème pour le moment.</p>
+    </div>
+  </div>
+</div>

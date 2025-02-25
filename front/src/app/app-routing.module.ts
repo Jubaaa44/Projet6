@@ -8,6 +8,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { SubjectsComponent } from './pages/subjects/subjects.component';
 import { PostDetailComponent } from './pages/post-detail/post-detail.component';
 import { CreatePostComponent } from './pages/create-post/create-post.component';
+import { MeComponent } from './pages/me/me.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -32,6 +33,11 @@ const routes: Routes = [
     path: 'create-post',
     component: CreatePostComponent,
     canActivate: [AuthGuard] // Protection de la route avec AuthGuard
+  },
+  {
+    path: 'me',
+    component: MeComponent,
+    canActivate: [AuthGuard]
   },
   // Redirection si route inconnue
   { path: '**', redirectTo: '' }

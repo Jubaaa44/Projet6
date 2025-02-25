@@ -1,0 +1,432 @@
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f9f9f9;
+  position: relative;
+  overflow-x: hidden;
+}
+
+// Header - Réutilisation du style du header
+.articles-header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid #eee;
+  position: relative;
+
+  .logo-container {
+    justify-self: start;
+    .logo {
+      max-width: 80px;
+      height: auto;
+    }
+  }
+
+  .navigation {
+    justify-self: center;
+    display: flex;
+    gap: 2rem;
+
+    .nav-link {
+      text-decoration: none;
+      color: #333;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 0.5rem 0;
+      position: relative;
+
+      &.active {
+        color: #6C63FF;
+
+        &:after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 2px;
+          background-color: #6C63FF;
+        }
+      }
+
+      &:hover {
+        color: #6C63FF;
+      }
+    }
+  }
+
+  .profile-icon {
+    justify-self: end;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0;
+    cursor: pointer;
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+  }
+
+  .hamburger-menu {
+    display: none;
+    cursor: pointer;
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+
+    .menu-icon {
+      width: 24px;
+      height: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+      span {
+        display: block;
+        height: 2px;
+        width: 100%;
+        background-color: #333;
+        transition: all 0.3s ease;
+      }
+    }
+  }
+}
+
+// Mobile menu - Réutilisation du style du menu mobile
+.mobile-menu-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 90;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+
+  &.active {
+    display: block;
+    opacity: 1;
+  }
+}
+
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: -280px;
+  width: 280px;
+  height: 100%;
+  background-color: white;
+  z-index: 100;
+  transition: right 0.3s ease;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+
+  &.active {
+    display: block;
+    right: 0;
+  }
+
+  .mobile-menu-header {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+
+    .close-menu {
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: #333;
+      line-height: 1;
+      padding: 0 0.5rem;
+    }
+  }
+
+  .mobile-navigation {
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem 1rem;
+    height: calc(100vh - 60px);
+    position: relative;
+
+    .nav-link {
+      text-decoration: none;
+      color: #333;
+      font-size: 1.1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid #eee;
+
+      &.active {
+        color: #6C63FF;
+        font-weight: 500;
+      }
+
+      &:hover {
+        color: #6C63FF;
+      }
+    }
+
+    .mobile-profile-icon {
+      position: absolute;
+      bottom: 60px;
+      right: 20px;
+      margin: 0;
+      padding: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f0f0f0;
+
+      img {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+    }
+  }
+}
+
+// Contenu principal
+.content-container {
+  padding: 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+// Titres des sections
+.section-title {
+  font-size: 1.5rem;
+  color: #333;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+// Formulaire profil
+.profile-form {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #d1d1d1;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+    font-family: inherit;
+
+    &:focus {
+      outline: none;
+      border-color: #6C63FF;
+    }
+  }
+
+  .save-btn {
+    display: block;
+    width: auto;
+    padding: 0.6rem 1.5rem;
+    margin: 1rem auto 0;
+    background-color: #6C63FF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: darken(#6C63FF, 5%);
+    }
+
+    &:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// Section déconnexion
+.logout-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+
+  .logout-btn {
+    color: #ff3b30;
+    background: none;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: color 0.2s;
+
+    &:hover {
+      color: darken(#ff3b30, 10%);
+    }
+  }
+}
+
+// Séparateur
+.divider {
+  height: 1px;
+  background-color: #ddd;
+  margin: 1.5rem 0;
+  width: 100%;
+}
+
+// Liste des abonnements
+.subscriptions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.subscription-card {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  .subscription-content {
+    margin-bottom: 1rem;
+  }
+
+  .subscription-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #333;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .subscription-description {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .unsubscribe-btn {
+    align-self: flex-end;
+    background-color: #f0f0f0;
+    color: #666;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background-color: #ff3b30;
+      color: white;
+    }
+  }
+}
+
+.empty-message {
+  text-align: center;
+  color: #666;
+  padding: 1rem;
+  font-style: italic;
+}
+
+// Media queries
+@media screen and (max-width: 768px) {
+  .articles-header {
+    grid-template-columns: 1fr auto auto;
+    padding: 0.5rem 1rem;
+
+    .navigation {
+      display: none;
+    }
+
+    .profile-icon {
+      display: none;
+    }
+
+    .hamburger-menu {
+      display: block;
+    }
+
+    .logo-container .logo {
+      max-width: 60px;
+    }
+  }
+
+  .content-container {
+    box-sizing: border-box;
+    width: 82%;
+    max-width: 450px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 1.5rem 0.75rem;
+  }
+
+  .profile-form,
+  .subscription-card,
+  .empty-message,
+  .section-title,
+  .logout-section,
+  .divider {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+  }
+
+  .profile-form {
+    padding: 1rem;
+  }
+
+  .subscription-card {
+    flex-direction: column;
+
+    .unsubscribe-btn {
+      align-self: flex-start;
+      margin-top: 0.5rem;
+    }
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .content-container {
+    width: 88%;
+    padding: 1.25rem 0.5rem;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+  }
+
+  .profile-form .form-control {
+    padding: 0.6rem 0.8rem;
+  }
+}

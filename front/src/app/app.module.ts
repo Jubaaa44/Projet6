@@ -18,9 +18,10 @@ import { SubjectsComponent } from './pages/subjects/subjects.component';
 import { PostDetailComponent } from './pages/post-detail/post-detail.component';
 import { FormsModule } from '@angular/forms';
 import { CreatePostComponent } from './pages/create-post/create-post.component';
+import { MeComponent } from './pages/me/me.component';
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent, LoginComponent, RegisterComponent, PostsComponent, SubjectsComponent, PostDetailComponent, CreatePostComponent],
+  declarations: [AppComponent, HomeComponent, LoginComponent, RegisterComponent, PostsComponent, SubjectsComponent, PostDetailComponent, CreatePostComponent, MeComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

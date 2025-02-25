@@ -34,6 +34,17 @@ export class SubjectService {
     );
   }
 
+  // Récupérer les abonnements de l'utilisateur connecté
+  getSubscriptionsForUser(): Observable<Subject[]> {
+    return this.http.get<Subject[]>(`${this.apiUrl}/subscriptions`).pipe(
+      tap(subscriptions => console.log('Abonnements récupérés:', subscriptions)),
+      catchError(error => {
+        console.error('Erreur lors de la récupération des abonnements:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
   // Créer un nouveau sujet
   createSubject(subject: Omit<Subject, 'id' | 'subscriberCount' | 'postCount'>): Observable<Subject> {
     return this.http.post<Subject>(this.apiUrl, subject).pipe(
@@ -76,7 +87,7 @@ export class SubjectService {
 
   // Se désabonner d'un sujet
   unsubscribeFromSubject(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}/unsubscribe`, {}).pipe(
+    return this.http.delete<void>(`${this.apiUrl}/${id}/unsubscribe`).pipe(
       catchError(error => {
         console.error(`Erreur lors du désabonnement du sujet ${id}:`, error);
         return throwError(() => error);
