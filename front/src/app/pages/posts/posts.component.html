@@ -1,4 +1,4 @@
-<div class="articles-container">
+<div class="articles-container" (click)="closeSortOptions()">
   <header class="articles-header">
     <div class="logo-container">
       <img src="/assets/logo_p6.png" alt="logo MDD" class="logo" />
@@ -32,7 +32,7 @@
     <nav class="mobile-navigation">
       <a routerLink="/articles" routerLinkActive="active" class="nav-link">Articles</a>
       <a routerLink="/themes" routerLinkActive="active" class="nav-link">Thèmes</a>
-      <a href="#" class="mobile-profile-icon">
+      <a routerLink="/me" class="mobile-profile-icon">
         <img src="/assets/utilisateur.png" alt="Profile" />
       </a>
     </nav>
@@ -41,11 +41,22 @@
   <div class="content-container">
     <div class="actions-bar">
       <button (click)="createPost()" class="create-btn">Créer un article</button>
-      <div class="sort-dropdown">
-        <span>Trier par</span>
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="6 9 12 15 18 9"></polyline>
-        </svg>
+      <div class="sort-dropdown" (click)="$event.stopPropagation()">
+        <div class="sort-selector" (click)="toggleSortOptions()">
+          <span>Trier par: {{ getCurrentSortLabel() }}</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+        <div class="sort-options" *ngIf="showSortOptions">
+          <div
+            *ngFor="let option of sortOptions"
+            class="sort-option"
+            [class.active]="currentSort === option.value"
+            (click)="sortPosts(option.value)">
+            {{ option.label }}
+          </div>
+        </div>
       </div>
     </div>
 

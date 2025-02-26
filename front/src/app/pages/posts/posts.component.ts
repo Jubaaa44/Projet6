@@ -15,6 +15,16 @@ export class PostsComponent implements OnInit {
   errorMessage = '';
   isMobileMenuOpen = false;
 
+  // Variables pour le tri
+  sortOptions = [
+    { value: 'date-desc', label: 'Date (récente)' },
+    { value: 'date-asc', label: 'Date (ancienne)' },
+    { value: 'title', label: 'Titre' },
+    { value: 'author', label: 'Auteur' }
+  ];
+  currentSort = 'date-desc';
+  showSortOptions = false;
+
   constructor(
     private postService: PostService,
     private router: Router
@@ -31,6 +41,7 @@ export class PostsComponent implements OnInit {
     this.postService.getPosts().subscribe({
       next: (posts) => {
         this.posts = posts;
+        this.sortPosts(this.currentSort);
         this.isLoading = false;
       },
       error: (error) => {
@@ -42,13 +53,52 @@ export class PostsComponent implements OnInit {
     });
   }
 
+  // Méthode pour trier les posts
+  sortPosts(sortType: string): void {
+    this.currentSort = sortType;
+    this.showSortOptions = false;
+
+    switch (sortType) {
+      case 'date-desc':
+        this.posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        break;
+      case 'date-asc':
+        this.posts.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        break;
+      case 'title':
+        this.posts.sort((a, b) => a.title.localeCompare(b.title));
+        break;
+      case 'author':
+        this.posts.sort((a, b) => a.authorUsername.localeCompare(b.authorUsername));
+        break;
+      default:
+        break;
+    }
+  }
+
+  // Méthode pour basculer l'affichage des options de tri
+  toggleSortOptions(): void {
+    this.showSortOptions = !this.showSortOptions;
+  }
+
+  // Méthode pour fermer les options de tri si on clique ailleurs
+  closeSortOptions(): void {
+    this.showSortOptions = false;
+  }
+
+  // Obtenir le label d'option de tri actuelle
+  getCurrentSortLabel(): string {
+    const option = this.sortOptions.find(opt => opt.value === this.currentSort);
+    return option ? option.label : '';
+  }
+
   createPost(): void {
     this.router.navigate(['/create-post']);
   }
 
   viewPost(id: number): void {
     this.router.navigate(['/post', id]);
-}
+  }
 
   toggleMobileMenu(): void {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
