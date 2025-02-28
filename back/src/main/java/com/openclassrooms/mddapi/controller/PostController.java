@@ -15,9 +15,16 @@ import com.openclassrooms.mddapi.security.UserDetailsImpl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 @RestController
 @RequestMapping("/api/posts")
 @CrossOrigin
+@Api(tags = "Post Controller", description = "Opérations liées aux posts/articles")
 public class PostController {
 
     @Autowired
@@ -33,6 +40,11 @@ public class PostController {
     private PostMapper postMapper;
 
     @GetMapping("/feed")
+    @ApiOperation(value = "Récupérer le fil d'actualité", notes = "Obtient le fil d'actualité personnalisé pour l'utilisateur connecté")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Récupération réussie du fil d'actualité"),
+        @ApiResponse(code = 401, message = "Non autorisé - authentification requise")
+    })
     public ResponseEntity<List<PostDTO>> getFeed() {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
             .getAuthentication().getPrincipal();
@@ -43,7 +55,16 @@ public class PostController {
     }
 
     @PostMapping
-    public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO) {
+    @ApiOperation(value = "Créer un post", notes = "Crée un nouveau post par l'utilisateur connecté")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Post créé avec succès"),
+        @ApiResponse(code = 400, message = "Requête invalide"),
+        @ApiResponse(code = 401, message = "Non autorisé - authentification requise"),
+        @ApiResponse(code = 404, message = "Sujet non trouvé")
+    })
+    public ResponseEntity<PostDTO> createPost(
+            @ApiParam(value = "Détails du post à créer", required = true) 
+            @RequestBody PostDTO postDTO) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
             .getAuthentication().getPrincipal();
         
@@ -53,7 +74,7 @@ public class PostController {
         // Association de l'auteur
         post.setAuthor(userService.getUserById(userDetails.getId()));
         
-        // Association du sujet - C'EST ICI LA CORRECTION PRINCIPALE
+        // Association du sujet
         if (postDTO.getSubjectId() != null) {
             Subject subject = subjectService.getSubjectById(postDTO.getSubjectId());
             post.setSubject(subject);
@@ -67,13 +88,27 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<PostDTO> getPost(@PathVariable Long postId) {
+    @ApiOperation(value = "Récupérer un post", notes = "Obtient les détails d'un post spécifique par son ID")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Récupération réussie du post"),
+        @ApiResponse(code = 404, message = "Post non trouvé")
+    })
+    public ResponseEntity<PostDTO> getPost(
+            @ApiParam(value = "ID du post à récupérer", required = true) 
+            @PathVariable Long postId) {
         Post post = postService.getPostById(postId);
         return ResponseEntity.ok(postMapper.toDto(post));
     }
 
     @GetMapping("/subject/{subjectId}")
-    public ResponseEntity<List<PostDTO>> getPostsBySubject(@PathVariable Long subjectId) {
+    @ApiOperation(value = "Récupérer les posts par sujet", notes = "Obtient tous les posts associés à un sujet spécifique")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Récupération réussie des posts"),
+        @ApiResponse(code = 404, message = "Sujet non trouvé")
+    })
+    public ResponseEntity<List<PostDTO>> getPostsBySubject(
+            @ApiParam(value = "ID du sujet dont on veut récupérer les posts", required = true) 
+            @PathVariable Long subjectId) {
         List<Post> posts = postService.getPostsBySubject(subjectId);
         return ResponseEntity.ok(posts.stream()
             .map(postMapper::toDto)
@@ -81,7 +116,14 @@ public class PostController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<PostDTO>> getPostsByUser(@PathVariable Long userId) {
+    @ApiOperation(value = "Récupérer les posts par utilisateur", notes = "Obtient tous les posts créés par un utilisateur spécifique")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Récupération réussie des posts"),
+        @ApiResponse(code = 404, message = "Utilisateur non trouvé")
+    })
+    public ResponseEntity<List<PostDTO>> getPostsByUser(
+            @ApiParam(value = "ID de l'utilisateur dont on veut récupérer les posts", required = true) 
+            @PathVariable Long userId) {
         List<Post> posts = postService.getPostsByAuthor(userId);
         return ResponseEntity.ok(posts.stream()
             .map(postMapper::toDto)
@@ -89,7 +131,19 @@ public class PostController {
     }
 
     @PutMapping("/{postId}")
-    public ResponseEntity<?> updatePost(@PathVariable Long postId, @RequestBody PostDTO postDTO) {
+    @ApiOperation(value = "Mettre à jour un post", notes = "Met à jour un post existant (uniquement par son auteur)")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Post mis à jour avec succès"),
+        @ApiResponse(code = 400, message = "Non autorisé à modifier ce post"),
+        @ApiResponse(code = 404, message = "Post non trouvé"),
+        @ApiResponse(code = 401, message = "Non autorisé - authentification requise")
+    })
+    public ResponseEntity<?> updatePost(
+            @ApiParam(value = "ID du post à mettre à jour", required = true) 
+            @PathVariable Long postId, 
+            
+            @ApiParam(value = "Détails du post mis à jour", required = true) 
+            @RequestBody PostDTO postDTO) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
             .getAuthentication().getPrincipal();
             
@@ -108,7 +162,16 @@ public class PostController {
     }
 
     @DeleteMapping("/{postId}")
-    public ResponseEntity<?> deletePost(@PathVariable Long postId) {
+    @ApiOperation(value = "Supprimer un post", notes = "Supprime un post existant (uniquement par son auteur)")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Post supprimé avec succès"),
+        @ApiResponse(code = 400, message = "Non autorisé à supprimer ce post"),
+        @ApiResponse(code = 404, message = "Post non trouvé"),
+        @ApiResponse(code = 401, message = "Non autorisé - authentification requise")
+    })
+    public ResponseEntity<?> deletePost(
+            @ApiParam(value = "ID du post à supprimer", required = true) 
+            @PathVariable Long postId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
             .getAuthentication().getPrincipal();
             

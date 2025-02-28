@@ -48,8 +48,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeRequests()
-            .antMatchers("/api/auth/**").permitAll()
-            .antMatchers("/api/posts/**").permitAll()  // Ajoutez cette ligne pour permettre l'accès aux posts
+            .antMatchers("/api/auth/login").permitAll()
+            .antMatchers("/api/auth/register").permitAll()
+            // Toutes les autres routes d'auth sont privées
+            .antMatchers("/api/auth/**").authenticated()
+            .antMatchers("/api/posts/**").authenticated()
+            // URLs Swagger UI
+            .antMatchers("/v2/api-docs",
+                         "/swagger-resources/**",
+                         "/swagger-resources",
+                         "/configuration/ui",
+                         "/configuration/security",
+                         "/swagger-ui.html",
+                         "/webjars/**").permitAll()
             .antMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Permettre les requêtes OPTIONS pour CORS
             .anyRequest().authenticated();
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

@@ -5,9 +5,20 @@ import com.openclassrooms.mddapi.model.Subject;
 import org.springframework.stereotype.Component;
 import java.util.stream.Collectors;
 
+/**
+ * Mapper pour convertir entre les entités Subject et leurs DTOs.
+ * Permet la transformation des objets du modèle en objets de transfert de données et vice-versa.
+ */
 @Component
 public class SubjectMapper {
     
+    /**
+     * Convertit une entité Subject en SubjectDTO.
+     * Inclut les identifiants des posts associés et des abonnés ainsi que leurs compteurs.
+     *
+     * @param subject L'entité Subject à convertir
+     * @return Le SubjectDTO correspondant, ou null si l'entité d'entrée est null
+     */
     public SubjectDTO toDto(Subject subject) {
         if (subject == null) {
             return null;
@@ -35,6 +46,14 @@ public class SubjectMapper {
         return dto;
     }
 
+    /**
+     * Convertit un SubjectDTO en entité Subject.
+     * Note: Cette méthode ne remplit pas les associations (posts, subscribers),
+     * elles doivent être gérées dans la couche service.
+     *
+     * @param dto Le SubjectDTO à convertir
+     * @return L'entité Subject correspondante, ou null si le DTO d'entrée est null
+     */
     public Subject toEntity(SubjectDTO dto) {
         if (dto == null) {
             return null;
