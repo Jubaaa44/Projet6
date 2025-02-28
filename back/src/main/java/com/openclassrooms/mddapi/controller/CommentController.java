@@ -43,10 +43,13 @@ public class CommentController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
             .getAuthentication().getPrincipal();
         
+        // Initialisation du commentaire
         commentDTO.setAuthorId(userDetails.getId());
         commentDTO.setDate(LocalDateTime.now());
 
+        // Création du commentaire
         CommentDTO createdComment = commentService.createComment(postId, commentDTO);
+        
         return ResponseEntity.ok(createdComment);
     }
 
@@ -63,6 +66,7 @@ public class CommentController {
         return ResponseEntity.ok(commentService.getCommentsByPost(postId));
     }
 
+    // Bon à faire, même si pas présent dans le MVP
     @PutMapping("/{commentId}")
     @ApiOperation(value = "Mettre à jour un commentaire", notes = "Met à jour un commentaire existant (uniquement par son auteur)")
     @ApiResponses(value = {
@@ -85,7 +89,10 @@ public class CommentController {
             return ResponseEntity.badRequest().body("Not authorized to update this comment");
         }
 
-        return ResponseEntity.ok(commentService.updateComment(commentId, commentDTO));
+        // Met à jour le commentaire
+        CommentDTO updatedComment = commentService.updateComment(commentId, commentDTO);
+        
+        return ResponseEntity.ok(updatedComment);
     }
 
     @DeleteMapping("/{commentId}")
@@ -107,6 +114,7 @@ public class CommentController {
             return ResponseEntity.badRequest().body("Not authorized to delete this comment");
         }
         
+        // Suppression du commentaire
         commentService.deleteComment(commentId);
         return ResponseEntity.ok().build();
     }

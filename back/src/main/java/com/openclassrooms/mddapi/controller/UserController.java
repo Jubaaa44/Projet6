@@ -15,7 +15,7 @@ import com.openclassrooms.mddapi.request.LoginRequest;
 import com.openclassrooms.mddapi.security.JwtResponse;
 import com.openclassrooms.mddapi.security.JwtTokenProvider;
 import com.openclassrooms.mddapi.security.UserDetailsImpl;
-import com.openclassrooms.mddapi.service.UserService;
+import com.openclassrooms.mddapi.service.UserServiceImpl;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,7 +33,7 @@ public class UserController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -53,39 +53,16 @@ public class UserController {
     public ResponseEntity<UserDTO> registerUser(
             @ApiParam(value = "Détails du nouvel utilisateur", required = true) 
             @RequestBody UserDTO userDTO) {
+        // Utilisation du mapper pour convertir le DTO en entité
         User user = userMapper.toEntity(userDTO);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        User savedUser = userService.createUser(user);
-        return ResponseEntity.ok(userMapper.toDto(savedUser));
-    }
-
-    @PostMapping("/login")
-    @ApiOperation(value = "Connecter un utilisateur", notes = "Authentifie un utilisateur et renvoie un token JWT")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Authentification réussie"),
-        @ApiResponse(code = 401, message = "Identifiants invalides")
-    })
-    public ResponseEntity<?> authenticateUser(
-            @ApiParam(value = "Identifiants de connexion", required = true) 
-            @RequestBody LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(
-                loginRequest.getEmail(),
-                loginRequest.getPassword()
-            )
-        );
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = tokenProvider.generateToken(authentication);
         
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-
-        return ResponseEntity.ok(new JwtResponse(
-            jwt,
-            userDetails.getId(),
-            userDetails.getUsername(),
-            userDetails.getEmail()
-        ));
+        // Appel au service
+        User savedUser = userServiceImpl.createUser(user);
+        
+        // Reconversion en DTO pour la réponse
+        UserDTO responseDTO = userMapper.toDto(savedUser);
+        return ResponseEntity.ok(responseDTO);
     }
 
     @GetMapping("/profile")
@@ -97,8 +74,13 @@ public class UserController {
     public ResponseEntity<UserDTO> getUserProfile() {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
             .getAuthentication().getPrincipal();
-        User user = userService.getUserById(userDetails.getId());
-        return ResponseEntity.ok(userMapper.toDto(user));
+            
+        // Récupération de l'entité
+        User user = userServiceImpl.getUserById(userDetails.getId());
+        
+        // Conversion en DTO pour la réponse
+        UserDTO userDTO = userMapper.toDto(user);
+        return ResponseEntity.ok(userDTO);
     }
 
     @PutMapping("/profile")
@@ -113,8 +95,15 @@ public class UserController {
             @RequestBody UserDTO userDTO) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
             .getAuthentication().getPrincipal();
-        User user = userMapper.toEntity(userDTO);
-        User updatedUser = userService.updateUser(userDetails.getId(), user);
-        return ResponseEntity.ok(userMapper.toDto(updatedUser));
+            
+        // Conversion du DTO reçu en entité
+        User userToUpdate = userMapper.toEntity(userDTO);
+        
+        // Mise à jour via le service
+        User updatedUser = userServiceImpl.updateUser(userDetails.getId(), userToUpdate);
+        
+        // Reconversion en DTO pour la réponse
+        UserDTO responseDTO = userMapper.toDto(updatedUser);
+        return ResponseEntity.ok(responseDTO);
     }
 }

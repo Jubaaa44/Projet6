@@ -6,12 +6,10 @@ import org.springframework.stereotype.Component;
 import java.util.stream.Collectors;
 
 /**
- * Mapper pour convertir entre les entités Post et leurs DTOs.
- * Permet la transformation des objets du modèle en objets de transfert de données et vice-versa.
- * Utilise CommentMapper pour gérer les commentaires associés.
+ * Implémentation du mapper pour convertir entre les entités Post et leurs DTOs.
  */
 @Component
-public class PostMapper {
+public class PostMapperImpl implements PostMapper {
     
     private final CommentMapper commentMapper;
     
@@ -20,17 +18,11 @@ public class PostMapper {
      *
      * @param commentMapper Le mapper pour convertir les commentaires associés
      */
-    public PostMapper(CommentMapper commentMapper) {
+    public PostMapperImpl(CommentMapper commentMapper) {
         this.commentMapper = commentMapper;
     }
     
-    /**
-     * Convertit une entité Post en PostDTO.
-     * Inclut la conversion des commentaires associés via le CommentMapper.
-     *
-     * @param post L'entité Post à convertir
-     * @return Le PostDTO correspondant, ou null si l'entité d'entrée est null
-     */
+    @Override
     public PostDTO toDto(Post post) {
         if (post == null) {
             return null;
@@ -61,14 +53,7 @@ public class PostMapper {
         return dto;
     }
 
-    /**
-     * Convertit un PostDTO en entité Post.
-     * Note: Cette méthode ne remplit pas les associations (author, subject, comments),
-     * elles doivent être gérées dans la couche service.
-     *
-     * @param dto Le PostDTO à convertir
-     * @return L'entité Post correspondante, ou null si le DTO d'entrée est null
-     */
+    @Override
     public Post toEntity(PostDTO dto) {
         if (dto == null) {
             return null;

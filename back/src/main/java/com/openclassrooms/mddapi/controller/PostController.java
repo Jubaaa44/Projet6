@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import com.openclassrooms.mddapi.dto.PostDTO;
-import com.openclassrooms.mddapi.mapper.PostMapper;
+import com.openclassrooms.mddapi.mapper.PostMapperImpl;
 import com.openclassrooms.mddapi.model.Post;
 import com.openclassrooms.mddapi.model.Subject;
 import com.openclassrooms.mddapi.service.PostService;
@@ -37,7 +37,7 @@ public class PostController {
     private SubjectService subjectService;
     
     @Autowired
-    private PostMapper postMapper;
+    private PostMapperImpl postMapperImpl;
 
     @GetMapping("/feed")
     @ApiOperation(value = "Récupérer le fil d'actualité", notes = "Obtient le fil d'actualité personnalisé pour l'utilisateur connecté")
@@ -48,9 +48,13 @@ public class PostController {
     public ResponseEntity<List<PostDTO>> getFeed() {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
             .getAuthentication().getPrincipal();
+        
+        // Récupération du fil d'actualité via le service
         List<Post> posts = postService.getFeedForUser(userDetails.getId());
+        
+        // Conversion des entités en DTOs
         return ResponseEntity.ok(posts.stream()
-            .map(postMapper::toDto)
+            .map(postMapperImpl::toDto)
             .collect(Collectors.toList()));
     }
 
@@ -69,7 +73,7 @@ public class PostController {
             .getAuthentication().getPrincipal();
         
         // Mapping du DTO vers l'entité
-        Post post = postMapper.toEntity(postDTO);
+        Post post = postMapperImpl.toEntity(postDTO);
         
         // Association de l'auteur
         post.setAuthor(userService.getUserById(userDetails.getId()));
@@ -84,7 +88,7 @@ public class PostController {
         Post savedPost = postService.createPost(post);
         
         // Conversion en DTO pour la réponse
-        return ResponseEntity.ok(postMapper.toDto(savedPost));
+        return ResponseEntity.ok(postMapperImpl.toDto(savedPost));
     }
 
     @GetMapping("/{postId}")
@@ -96,8 +100,11 @@ public class PostController {
     public ResponseEntity<PostDTO> getPost(
             @ApiParam(value = "ID du post à récupérer", required = true) 
             @PathVariable Long postId) {
+        // Récupération du post via le service
         Post post = postService.getPostById(postId);
-        return ResponseEntity.ok(postMapper.toDto(post));
+        
+        // Conversion en DTO
+        return ResponseEntity.ok(postMapperImpl.toDto(post));
     }
 
     @GetMapping("/subject/{subjectId}")
@@ -109,9 +116,12 @@ public class PostController {
     public ResponseEntity<List<PostDTO>> getPostsBySubject(
             @ApiParam(value = "ID du sujet dont on veut récupérer les posts", required = true) 
             @PathVariable Long subjectId) {
+        // Récupération des posts via le service
         List<Post> posts = postService.getPostsBySubject(subjectId);
+        
+        // Conversion des entités en DTOs
         return ResponseEntity.ok(posts.stream()
-            .map(postMapper::toDto)
+            .map(postMapperImpl::toDto)
             .collect(Collectors.toList()));
     }
 
@@ -124,9 +134,12 @@ public class PostController {
     public ResponseEntity<List<PostDTO>> getPostsByUser(
             @ApiParam(value = "ID de l'utilisateur dont on veut récupérer les posts", required = true) 
             @PathVariable Long userId) {
+        // Récupération des posts via le service
         List<Post> posts = postService.getPostsByAuthor(userId);
+        
+        // Conversion des entités en DTOs
         return ResponseEntity.ok(posts.stream()
-            .map(postMapper::toDto)
+            .map(postMapperImpl::toDto)
             .collect(Collectors.toList()));
     }
 
@@ -152,13 +165,14 @@ public class PostController {
             return ResponseEntity.badRequest().body("Not authorized to update this post");
         }
 
-        Post post = postMapper.toEntity(postDTO);
-        // Conserver le sujet et l'auteur lors d'une mise à jour
-        post.setAuthor(existingPost.getAuthor());
-        post.setSubject(existingPost.getSubject());
+        // Conversion du DTO en entité pour mise à jour
+        Post post = postMapperImpl.toEntity(postDTO);
         
+        // Mise à jour du post via le service
         Post updatedPost = postService.updatePost(postId, post);
-        return ResponseEntity.ok(postMapper.toDto(updatedPost));
+        
+        // Conversion en DTO pour la réponse
+        return ResponseEntity.ok(postMapperImpl.toDto(updatedPost));
     }
 
     @DeleteMapping("/{postId}")
@@ -180,6 +194,7 @@ public class PostController {
             return ResponseEntity.badRequest().body("Not authorized to delete this post");
         }
         
+        // Suppression via le service
         postService.deletePost(postId);
         return ResponseEntity.ok().build();
     }

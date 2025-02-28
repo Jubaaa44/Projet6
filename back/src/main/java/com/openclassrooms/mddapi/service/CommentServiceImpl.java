@@ -1,12 +1,11 @@
 package com.openclassrooms.mddapi.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.openclassrooms.mddapi.dto.CommentDTO;
 import com.openclassrooms.mddapi.exception.ResourceNotFoundException;
-import com.openclassrooms.mddapi.mapper.CommentMapper;
+import com.openclassrooms.mddapi.mapper.CommentMapperImpl;
 import com.openclassrooms.mddapi.model.Comment;
 import com.openclassrooms.mddapi.model.Post;
 import com.openclassrooms.mddapi.model.User;
@@ -14,7 +13,6 @@ import com.openclassrooms.mddapi.repository.CommentRepository;
 import com.openclassrooms.mddapi.repository.PostRepository;
 import com.openclassrooms.mddapi.repository.UserRepository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,12 +23,12 @@ import java.util.stream.Collectors;
  */
 @Service
 @Transactional
-public class CommentService {
+public class CommentServiceImpl {
     
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
-    private final CommentMapper commentMapper;
+    private final CommentMapperImpl commentMapperImpl;
     
     /**
      * Constructeur avec injection des dépendances.
@@ -38,17 +36,16 @@ public class CommentService {
      * @param commentRepository Repository pour accéder aux commentaires
      * @param postRepository Repository pour accéder aux posts
      * @param userRepository Repository pour accéder aux utilisateurs
-     * @param commentMapper Mapper pour convertir entre Comment et CommentDTO
+     * @param commentMapperImpl Mapper pour convertir entre Comment et CommentDTO
      */
-    @Autowired
-    public CommentService(CommentRepository commentRepository, 
+    public CommentServiceImpl(CommentRepository commentRepository, 
                          PostRepository postRepository,
                          UserRepository userRepository,
-                         CommentMapper commentMapper) {
+                         CommentMapperImpl commentMapperImpl) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
         this.userRepository = userRepository;
-        this.commentMapper = commentMapper;
+        this.commentMapperImpl = commentMapperImpl;
     }
     
     /**
@@ -66,12 +63,12 @@ public class CommentService {
         User author = userRepository.findById(commentDTO.getAuthorId())
             .orElseThrow(() -> new ResourceNotFoundException("Author not found"));
             
-        Comment comment = commentMapper.toEntity(commentDTO);
+        Comment comment = commentMapperImpl.toEntity(commentDTO);
         comment.setPost(post);
         comment.setAuthor(author);
         
         Comment savedComment = commentRepository.save(comment);
-        return commentMapper.toDto(savedComment);
+        return commentMapperImpl.toDto(savedComment);
     }
     
     /**
@@ -83,7 +80,7 @@ public class CommentService {
     public List<CommentDTO> getCommentsByPost(Long postId) {
         List<Comment> comments = commentRepository.findByPostId(postId);
         return comments.stream()
-                .map(commentMapper::toDto)
+                .map(commentMapperImpl::toDto)
                 .collect(Collectors.toList());
     }
     
@@ -97,7 +94,7 @@ public class CommentService {
     public CommentDTO getCommentById(Long id) {
         Comment comment = commentRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Comment not found"));
-        return commentMapper.toDto(comment);
+        return commentMapperImpl.toDto(comment);
     }
     
     /**
@@ -113,11 +110,11 @@ public class CommentService {
         Comment existingComment = commentRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Comment not found"));
             
-        Comment comment = commentMapper.toEntity(commentDTO);
+        Comment comment = commentMapperImpl.toEntity(commentDTO);
         existingComment.setContent(comment.getContent());
         
         Comment updatedComment = commentRepository.save(existingComment);
-        return commentMapper.toDto(updatedComment);
+        return commentMapperImpl.toDto(updatedComment);
     }
     
     /**

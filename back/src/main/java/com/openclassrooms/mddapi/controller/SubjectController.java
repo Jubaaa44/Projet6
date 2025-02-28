@@ -8,7 +8,7 @@ import com.openclassrooms.mddapi.dto.SubjectDTO;
 import com.openclassrooms.mddapi.mapper.SubjectMapper;
 import com.openclassrooms.mddapi.model.Subject;
 import com.openclassrooms.mddapi.service.SubjectService;
-import com.openclassrooms.mddapi.service.UserService;
+import com.openclassrooms.mddapi.service.SubjectServiceImpl;
 import com.openclassrooms.mddapi.security.UserDetailsImpl;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,9 +29,6 @@ public class SubjectController {
     private SubjectService subjectService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private SubjectMapper subjectMapper;
 
     @GetMapping
@@ -40,7 +37,10 @@ public class SubjectController {
         @ApiResponse(code = 200, message = "Récupération réussie des sujets")
     })
     public ResponseEntity<List<SubjectDTO>> getAllSubjects() {
+        // Récupération des sujets via le service
         List<Subject> subjects = subjectService.getAllSubjects();
+        
+        // Conversion des entités en DTOs
         return ResponseEntity.ok(subjects.stream()
             .map(subjectMapper::toDto)
             .collect(Collectors.toList()));
@@ -58,7 +58,11 @@ public class SubjectController {
             @PathVariable Long subjectId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
             .getAuthentication().getPrincipal();
+            
+        // Abonnement au sujet via le service
         subjectService.subscribeUser(userDetails.getId(), subjectId);
+        
+        // Réponse simple OK
         return ResponseEntity.ok().build();
     }
 
@@ -74,7 +78,11 @@ public class SubjectController {
             @PathVariable Long subjectId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
             .getAuthentication().getPrincipal();
+            
+        // Désabonnement du sujet via le service
         subjectService.unsubscribeUser(userDetails.getId(), subjectId);
+        
+        // Réponse simple OK
         return ResponseEntity.ok().build();
     }
 
@@ -87,7 +95,30 @@ public class SubjectController {
     public ResponseEntity<SubjectDTO> getSubject(
             @ApiParam(value = "ID du sujet à récupérer", required = true) 
             @PathVariable Long subjectId) {
+        // Récupération du sujet via le service
         Subject subject = subjectService.getSubjectById(subjectId);
+        
+        // Conversion en DTO
         return ResponseEntity.ok(subjectMapper.toDto(subject));
+    }
+    
+    @PostMapping
+    @ApiOperation(value = "Créer un nouveau sujet", notes = "Permet la création d'un nouveau sujet de discussion")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Sujet créé avec succès"),
+        @ApiResponse(code = 400, message = "Requête invalide"),
+        @ApiResponse(code = 401, message = "Non autorisé - authentification requise")
+    })
+    public ResponseEntity<SubjectDTO> createSubject(
+            @ApiParam(value = "Détails du sujet à créer", required = true) 
+            @RequestBody SubjectDTO subjectDTO) {
+        // Conversion du DTO en entité
+        Subject subject = subjectMapper.toEntity(subjectDTO);
+        
+        // Création du sujet via le service
+        Subject createdSubject = subjectService.createSubject(subject);
+        
+        // Conversion de l'entité résultante en DTO
+        return ResponseEntity.ok(subjectMapper.toDto(createdSubject));
     }
 }

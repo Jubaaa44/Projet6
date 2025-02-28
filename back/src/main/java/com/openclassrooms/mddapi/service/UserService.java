@@ -1,9 +1,7 @@
 package com.openclassrooms.mddapi.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.openclassrooms.mddapi.model.User;
-import com.openclassrooms.mddapi.repository.UserRepository;
 import java.util.List;
 
 /**
@@ -12,11 +10,8 @@ import java.util.List;
  * et vérifie les contraintes d'unicité lors de la création ou mise à jour.
  */
 @Service
-public class UserServiceImpl implements UserService {
-    
-    @Autowired
-    private UserRepository userRepository;
-    
+public interface UserService {
+
     /**
      * Crée un nouvel utilisateur.
      * Vérifie que l'email et le nom d'utilisateur sont uniques avant création.
@@ -25,17 +20,7 @@ public class UserServiceImpl implements UserService {
      * @return L'utilisateur créé, incluant l'ID généré
      * @throws RuntimeException Si l'email ou le nom d'utilisateur existe déjà
      */
-    public User createUser(User user) {
-        // Vérifier si email ou username existe déjà
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new RuntimeException("Email already exists");
-        }
-        if (userRepository.existsByUsername(user.getUsername())) {
-            throw new RuntimeException("Username already exists");
-        }
-        
-        return userRepository.save(user);
-    }
+    public User createUser(User user);
     
     /**
      * Récupère un utilisateur par son identifiant.
@@ -44,11 +29,7 @@ public class UserServiceImpl implements UserService {
      * @return L'utilisateur correspondant
      * @throws RuntimeException Si l'utilisateur n'existe pas
      */
-    public User getUserById(Long id) {
-        return userRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("User not found"));
-    }
-    
+    public User getUserById(Long id);
     /**
      * Met à jour un utilisateur existant.
      * 
@@ -57,28 +38,19 @@ public class UserServiceImpl implements UserService {
      * @return L'utilisateur mis à jour
      * @throws RuntimeException Si l'utilisateur n'existe pas
      */
-    public User updateUser(Long id, User userDetails) {
-        User user = getUserById(id);
-        user.setUsername(userDetails.getUsername());
-        user.setEmail(userDetails.getEmail());
-        return userRepository.save(user);
-    }
+    public User updateUser(Long id, User userDetails);
     
     /**
      * Récupère tous les utilisateurs du système.
      * 
      * @return Liste de tous les utilisateurs
      */
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
+    public List<User> getAllUsers();
     
     /**
      * Supprime un utilisateur spécifique.
      * 
      * @param id Identifiant de l'utilisateur à supprimer
      */
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
-    }
+    public void deleteUser(Long id);
 }

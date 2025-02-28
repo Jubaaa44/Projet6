@@ -5,11 +5,10 @@ import com.openclassrooms.mddapi.model.Comment;
 import org.springframework.stereotype.Component;
 
 /**
- * Mapper pour convertir entre les entités Comment et leurs DTOs.
- * Permet la transformation des objets du modèle en objets de transfert de données et vice-versa.
+ * Implémentation du mapper pour convertir entre les entités Comment et leurs DTOs.
  */
 @Component
-public class CommentMapper {
+public class CommentMapperImpl implements CommentMapper {
     
     /**
      * Convertit une entité Comment en CommentDTO.
@@ -17,6 +16,7 @@ public class CommentMapper {
      * @param comment L'entité Comment à convertir
      * @return Le CommentDTO correspondant, ou null si l'entité d'entrée est null
      */
+    @Override
     public CommentDTO toDto(Comment comment) {
         if (comment == null) {
             return null;
@@ -47,6 +47,7 @@ public class CommentMapper {
      * @param dto Le CommentDTO à convertir
      * @return L'entité Comment correspondante, ou null si le DTO d'entrée est null
      */
+    @Override
     public Comment toEntity(CommentDTO dto) {
         if (dto == null) {
             return null;
