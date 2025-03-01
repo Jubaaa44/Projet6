@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Transactional
-public class CommentServiceImpl {
+public class CommentServiceImpl implements CommentService {
     
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;

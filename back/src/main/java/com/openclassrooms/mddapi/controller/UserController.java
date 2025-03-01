@@ -44,6 +44,34 @@ public class UserController {
     @Autowired
     private UserMapper userMapper;
 
+    
+    @PostMapping("/login")
+    @ApiOperation(value = "Connecter un utilisateur", notes = "Authentifie un utilisateur et retourne un token JWT")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Authentification réussie"),
+        @ApiResponse(code = 401, message = "Identifiants invalides")
+    })
+    public ResponseEntity<JwtResponse> authenticateUser(
+            @ApiParam(value = "Informations de connexion", required = true) 
+            @RequestBody LoginRequest loginRequest) {
+        
+        Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
+        );
+        
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = tokenProvider.generateToken(authentication);
+        
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        
+        return ResponseEntity.ok(new JwtResponse(
+            jwt,
+            userDetails.getId(),
+            userDetails.getUsername(),
+            userDetails.getEmail()
+        ));
+    }
+    
     @PostMapping("/register")
     @ApiOperation(value = "Inscrire un nouvel utilisateur", notes = "Crée un nouveau compte utilisateur")
     @ApiResponses(value = {

@@ -70,7 +70,7 @@ public class UserMapperImpl implements UserMapper {
         user.setId(dto.getId());
         user.setEmail(dto.getEmail());
         user.setUsername(dto.getUsername());
-        user.setPassword(dto.getPassword()); // Transfert du mot de passe (sera encodé par le service)
+        user.setPassword(dto.getPassword());
         return user;
     }
 }
