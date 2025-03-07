@@ -7,7 +7,8 @@
   overflow-x: hidden;
 }
 
-.subjects-header {
+// Header
+.articles-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -24,9 +25,9 @@
     }
   }
 
-  .navigation {
+  .nav-profile-container {
     display: flex;
-    gap: 2rem;
+    align-items: center;
 
     .nav-link {
       text-decoration: none;
@@ -34,6 +35,7 @@
       font-size: 1rem;
       font-weight: 500;
       padding: 0.5rem 0;
+      margin-right: 1.5rem;
       position: relative;
 
       &.active {
@@ -100,6 +102,7 @@
   }
 }
 
+// Mobile menu
 .mobile-menu-overlay {
   display: none;
   position: fixed;
@@ -114,6 +117,7 @@
 
   &.active {
     opacity: 1;
+    display: block;
   }
 }
 
@@ -131,6 +135,7 @@
 
   &.active {
     right: 0;
+    display: block;
   }
 
   .mobile-menu-header {
@@ -243,12 +248,14 @@
   }
 }
 
+// Style pour la grille des sujets
 .subjects-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
 }
 
+// Loading, Error containers
 .loading-container,
 .error-container,
 .empty-container {
@@ -292,6 +299,7 @@
   }
 }
 
+// Style des cartes de sujets
 .subject-card {
   background-color: white;
   border-radius: 8px;
@@ -341,15 +349,12 @@
   }
 }
 
+// Media queries
 @media screen and (max-width: 768px) {
-  .subjects-header {
+  .articles-header {
     padding: 0.5rem 1rem;
 
-    .navigation {
-      display: none;
-    }
-
-    .profile-icon {
+    .nav-profile-container {
       display: none;
     }
 

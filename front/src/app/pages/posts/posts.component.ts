@@ -15,12 +15,10 @@ export class PostsComponent implements OnInit {
   errorMessage = '';
   isMobileMenuOpen = false;
 
-  // Variables pour le tri
+  // Simplification : garder uniquement les options de tri par date
   sortOptions = [
     { value: 'date-desc', label: 'Date (récente)' },
-    { value: 'date-asc', label: 'Date (ancienne)' },
-    { value: 'title', label: 'Titre' },
-    { value: 'author', label: 'Auteur' }
+    { value: 'date-asc', label: 'Date (ancienne)' }
   ];
   currentSort = 'date-desc';
   showSortOptions = false;
@@ -65,28 +63,30 @@ export class PostsComponent implements OnInit {
       case 'date-asc':
         this.posts.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
         break;
-      case 'title':
-        this.posts.sort((a, b) => a.title.localeCompare(b.title));
-        break;
-      case 'author':
-        this.posts.sort((a, b) => a.authorUsername.localeCompare(b.authorUsername));
-        break;
       default:
         break;
     }
   }
 
-  // Méthode pour basculer l'affichage des options de tri
+  // Nouvelle méthode pour basculer la direction du tri
+  toggleSortDirection(): void {
+    // Si le tri actuel est descendant (par défaut), passer à ascendant, sinon revenir à descendant
+    const newSort = this.currentSort === 'date-desc' ? 'date-asc' : 'date-desc';
+
+    // Utiliser la méthode sortPosts existante pour effectuer le tri
+    this.sortPosts(newSort);
+  }
+
+  // Ces méthodes ne sont plus nécessaires pour le nouveau design mais
+  // on les garde pour éviter de casser d'autres fonctionnalités
   toggleSortOptions(): void {
     this.showSortOptions = !this.showSortOptions;
   }
 
-  // Méthode pour fermer les options de tri si on clique ailleurs
   closeSortOptions(): void {
     this.showSortOptions = false;
   }
 
-  // Obtenir le label d'option de tri actuelle
   getCurrentSortLabel(): string {
     const option = this.sortOptions.find(opt => opt.value === this.currentSort);
     return option ? option.label : '';

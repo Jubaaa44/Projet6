@@ -7,13 +7,12 @@
       </a>
     </div>
 
-    <nav class="navigation">
+    <div class="nav-profile-container">
       <a routerLink="/articles" routerLinkActive="active" class="nav-link">Articles</a>
       <a routerLink="/themes" routerLinkActive="active" class="nav-link">Thèmes</a>
-    </nav>
-
-    <div class="profile-icon" routerLink="/me">
-      <img src="/assets/utilisateur.png" alt="Profile" />
+      <div class="profile-icon" routerLink="/me">
+        <img src="/assets/utilisateur.png" alt="Profile" />
+      </div>
     </div>
 
     <div class="hamburger-menu" (click)="toggleMobileMenu()">
@@ -40,35 +39,37 @@
     </nav>
   </div>
 
-  <!-- Contenu principal -->
-  <div class="content-container">
-    <div class="create-post-header">
-      <a routerLink="/articles" class="back-button">←</a>
-      <h1 class="page-title">Créer un nouvel article</h1>
+  <!-- Contenu principal restructuré -->
+  <div class="create-post-wrapper">
+    <a routerLink="/articles" class="back-button">←</a>
+
+    <div class="content-container">
+      <div class="create-post-header">
+        <h1 class="page-title">Créer un nouvel article</h1>
+      </div>
+
+      <form [formGroup]="postForm" (ngSubmit)="onSubmit()" class="post-form">
+        <div class="form-group theme-selector">
+          <select formControlName="themeId" class="form-control">
+            <option value="" disabled selected>Sélectionner un thème</option>
+            <option *ngFor="let theme of themes" [value]="theme.id">{{ theme.name }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <input type="text" formControlName="title" class="form-control" placeholder="Titre de l'article">
+        </div>
+
+        <div class="form-group">
+          <textarea formControlName="content" class="form-control content-area" placeholder="Contenu de l'article" rows="6"></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="create-btn" [disabled]="postForm.invalid || isSubmitting">
+            Créer
+          </button>
+        </div>
+      </form>
     </div>
-
-    <form [formGroup]="postForm" (ngSubmit)="onSubmit()" class="post-form">
-      <div class="form-group theme-selector">
-        <select formControlName="themeId" class="form-control">
-          <option value="" disabled selected>Sélectionner un thème</option>
-          <option *ngFor="let theme of themes" [value]="theme.id">{{ theme.name }}</option>
-        </select>
-
-      </div>
-
-      <div class="form-group">
-        <input type="text" formControlName="title" class="form-control" placeholder="Titre de l'article">
-      </div>
-
-      <div class="form-group">
-        <textarea formControlName="content" class="form-control content-area" placeholder="Contenu de l'article" rows="6"></textarea>
-      </div>
-
-      <div class="form-actions">
-        <button type="submit" class="create-btn" [disabled]="postForm.invalid || isSubmitting">
-          Créer
-        </button>
-      </div>
-    </form>
   </div>
 </div>

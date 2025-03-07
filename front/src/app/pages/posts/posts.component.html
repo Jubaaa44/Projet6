@@ -4,13 +4,12 @@
       <img src="/assets/logo_p6.png" alt="logo MDD" class="logo" />
     </div>
 
-    <nav class="navigation">
+    <div class="nav-profile-container">
       <a routerLink="/articles" routerLinkActive="active" class="nav-link">Articles</a>
       <a routerLink="/themes" routerLinkActive="active" class="nav-link">Thèmes</a>
-    </nav>
-
-    <div class="profile-icon" routerLink="/me">
-      <img src="/assets/utilisateur.png" alt="Profile" />
+      <div class="profile-icon" routerLink="/me">
+        <img src="/assets/utilisateur.png" alt="Profile" />
+      </div>
     </div>
 
     <!-- Hamburger menu pour mobile -->
@@ -41,22 +40,9 @@
   <div class="content-container">
     <div class="actions-bar">
       <button (click)="createPost()" class="create-btn">Créer un article</button>
-      <div class="sort-dropdown" (click)="$event.stopPropagation()">
-        <div class="sort-selector" (click)="toggleSortOptions()">
-          <span>Trier par: {{ getCurrentSortLabel() }}</span>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </div>
-        <div class="sort-options" *ngIf="showSortOptions">
-          <div
-            *ngFor="let option of sortOptions"
-            class="sort-option"
-            [class.active]="currentSort === option.value"
-            (click)="sortPosts(option.value)">
-            {{ option.label }}
-          </div>
-        </div>
+      <div class="sort-button" (click)="toggleSortDirection()">
+        <span>Trier par</span>
+        <span class="arrow" [class.reversed]="currentSort === 'date-asc'">↓</span>
       </div>
     </div>
 
