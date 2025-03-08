@@ -454,8 +454,24 @@
   }
 
   .post-meta {
-    flex-direction: column;
-    gap: 0.5rem;
+    display: block;
+
+    .post-date {
+      display: inline-block;
+    }
+
+    .post-author {
+      display: inline-block;
+      float: right;
+      padding-right: 20%; /* Pour recentrer un peu l'auteur */
+    }
+
+    .post-theme {
+      display: block;
+      clear: both;
+      margin-top: 0.5rem;
+      font-weight: 500;
+    }
   }
 
   .comments-list {
