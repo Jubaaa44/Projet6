@@ -1,11 +1,18 @@
 package com.openclassrooms.mddapi.dto;
 
 import java.time.LocalDateTime;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @ApiModel(description = "Objet de transfert de données pour les commentaires")
 public class CommentDTO {
     @ApiModelProperty(notes = "Identifiant unique du commentaire", example = "1")

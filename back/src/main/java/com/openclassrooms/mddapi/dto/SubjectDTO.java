@@ -1,11 +1,19 @@
 package com.openclassrooms.mddapi.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @ApiModel(description = "Objet de transfert de données pour les sujets/thématiques")
 public class SubjectDTO {
     @ApiModelProperty(notes = "Identifiant unique du sujet", example = "1")

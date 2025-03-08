@@ -1,6 +1,7 @@
 package com.openclassrooms.mddapi.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,27 +24,19 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin
+@RequiredArgsConstructor
 @Api(tags = "User Controller", description = "Opérations d'authentification et de gestion des utilisateurs")
 public class UserController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private UserServiceImpl userServiceImpl;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JwtTokenProvider tokenProvider;
-
-    @Autowired
-    private UserMapper userMapper;
-
+    private final AuthenticationManager authenticationManager;
+    private final UserServiceImpl userServiceImpl;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider tokenProvider;
+    private final UserMapper userMapper;
     
     @PostMapping("/login")
     @ApiOperation(value = "Connecter un utilisateur", notes = "Authentifie un utilisateur et retourne un token JWT")
@@ -64,6 +57,9 @@ public class UserController {
         
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         
+        log.info("Utilisateur connecté avec succès : id={}, email={}", 
+                 userDetails.getId(), userDetails.getEmail());
+        
         return ResponseEntity.ok(new JwtResponse(
             jwt,
             userDetails.getId(),
@@ -81,15 +77,16 @@ public class UserController {
     public ResponseEntity<UserDTO> registerUser(
             @ApiParam(value = "Détails du nouvel utilisateur", required = true) 
             @RequestBody UserDTO userDTO) {
-        // Utilisation du mapper pour convertir le DTO en entité
+        
         User user = userMapper.toEntity(userDTO);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         
-        // Appel au service
         User savedUser = userServiceImpl.createUser(user);
-        
-        // Reconversion en DTO pour la réponse
         UserDTO responseDTO = userMapper.toDto(savedUser);
+        
+        log.info("Nouvel utilisateur inscrit : id={}, username={}", 
+                 responseDTO.getId(), responseDTO.getUsername());
+        
         return ResponseEntity.ok(responseDTO);
     }
 
@@ -103,11 +100,11 @@ public class UserController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
             .getAuthentication().getPrincipal();
             
-        // Récupération de l'entité
         User user = userServiceImpl.getUserById(userDetails.getId());
-        
-        // Conversion en DTO pour la réponse
         UserDTO userDTO = userMapper.toDto(user);
+        
+        log.debug("Profil utilisateur récupéré : id={}", userDetails.getId());
+        
         return ResponseEntity.ok(userDTO);
     }
 
@@ -124,14 +121,18 @@ public class UserController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
             .getAuthentication().getPrincipal();
             
-        // Conversion du DTO reçu en entité
         User userToUpdate = userMapper.toEntity(userDTO);
         
-        // Mise à jour via le service
-        User updatedUser = userServiceImpl.updateUser(userDetails.getId(), userToUpdate);
+        // Si mot de passe présent, l'encoder
+        if (userToUpdate.getPassword() != null && !userToUpdate.getPassword().isEmpty()) {
+            userToUpdate.setPassword(passwordEncoder.encode(userToUpdate.getPassword()));
+        }
         
-        // Reconversion en DTO pour la réponse
+        User updatedUser = userServiceImpl.updateUser(userDetails.getId(), userToUpdate);
         UserDTO responseDTO = userMapper.toDto(updatedUser);
+        
+        log.info("Profil utilisateur mis à jour : id={}", userDetails.getId());
+        
         return ResponseEntity.ok(responseDTO);
     }
 }

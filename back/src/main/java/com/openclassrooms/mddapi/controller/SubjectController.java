@@ -1,6 +1,7 @@
 package com.openclassrooms.mddapi.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -8,7 +9,6 @@ import com.openclassrooms.mddapi.dto.SubjectDTO;
 import com.openclassrooms.mddapi.mapper.SubjectMapper;
 import com.openclassrooms.mddapi.model.Subject;
 import com.openclassrooms.mddapi.service.SubjectService;
-import com.openclassrooms.mddapi.service.SubjectServiceImpl;
 import com.openclassrooms.mddapi.security.UserDetailsImpl;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,17 +19,16 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/subjects")
 @CrossOrigin
+@RequiredArgsConstructor
 @Api(tags = "Subject Controller", description = "Opérations liées aux sujets/thématiques de discussion")
 public class SubjectController {
 
-    @Autowired
-    private SubjectService subjectService;
-
-    @Autowired
-    private SubjectMapper subjectMapper;
+    private final SubjectService subjectService;
+    private final SubjectMapper subjectMapper;
 
     @GetMapping
     @ApiOperation(value = "Récupérer tous les sujets", notes = "Obtient la liste de tous les sujets disponibles")
@@ -37,13 +36,13 @@ public class SubjectController {
         @ApiResponse(code = 200, message = "Récupération réussie des sujets")
     })
     public ResponseEntity<List<SubjectDTO>> getAllSubjects() {
-        // Récupération des sujets via le service
         List<Subject> subjects = subjectService.getAllSubjects();
-        
-        // Conversion des entités en DTOs
-        return ResponseEntity.ok(subjects.stream()
+        List<SubjectDTO> subjectDTOs = subjects.stream()
             .map(subjectMapper::toDto)
-            .collect(Collectors.toList()));
+            .collect(Collectors.toList());
+        
+        log.debug("Récupération de {} sujets", subjectDTOs.size());
+        return ResponseEntity.ok(subjectDTOs);
     }
 
     @PostMapping("/{subjectId}/subscribe")
@@ -59,10 +58,9 @@ public class SubjectController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
             .getAuthentication().getPrincipal();
             
-        // Abonnement au sujet via le service
         subjectService.subscribeUser(userDetails.getId(), subjectId);
         
-        // Réponse simple OK
+        log.info("Utilisateur id={} abonné au sujet id={}", userDetails.getId(), subjectId);
         return ResponseEntity.ok().build();
     }
 
@@ -79,10 +77,9 @@ public class SubjectController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
             .getAuthentication().getPrincipal();
             
-        // Désabonnement du sujet via le service
         subjectService.unsubscribeUser(userDetails.getId(), subjectId);
         
-        // Réponse simple OK
+        log.info("Utilisateur id={} désabonné du sujet id={}", userDetails.getId(), subjectId);
         return ResponseEntity.ok().build();
     }
 
@@ -95,11 +92,11 @@ public class SubjectController {
     public ResponseEntity<SubjectDTO> getSubject(
             @ApiParam(value = "ID du sujet à récupérer", required = true) 
             @PathVariable Long subjectId) {
-        // Récupération du sujet via le service
         Subject subject = subjectService.getSubjectById(subjectId);
+        SubjectDTO subjectDTO = subjectMapper.toDto(subject);
         
-        // Conversion en DTO
-        return ResponseEntity.ok(subjectMapper.toDto(subject));
+        log.debug("Sujet récupéré : id={}", subjectId);
+        return ResponseEntity.ok(subjectDTO);
     }
     
     @PostMapping
@@ -112,13 +109,11 @@ public class SubjectController {
     public ResponseEntity<SubjectDTO> createSubject(
             @ApiParam(value = "Détails du sujet à créer", required = true) 
             @RequestBody SubjectDTO subjectDTO) {
-        // Conversion du DTO en entité
         Subject subject = subjectMapper.toEntity(subjectDTO);
-        
-        // Création du sujet via le service
         Subject createdSubject = subjectService.createSubject(subject);
+        SubjectDTO result = subjectMapper.toDto(createdSubject);
         
-        // Conversion de l'entité résultante en DTO
-        return ResponseEntity.ok(subjectMapper.toDto(createdSubject));
+        log.info("Sujet créé avec succès : id={}, nom={}", result.getId(), result.getName());
+        return ResponseEntity.ok(result);
     }
 }

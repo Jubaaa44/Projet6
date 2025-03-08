@@ -2,11 +2,18 @@ package com.openclassrooms.mddapi.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @ApiModel(description = "Objet de transfert de données pour les posts/articles")
 public class PostDTO {
     @ApiModelProperty(notes = "Identifiant unique du post", example = "1")

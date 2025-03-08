@@ -2,8 +2,12 @@ package com.openclassrooms.mddapi.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.openclassrooms.mddapi.controller.UserController;
 import com.openclassrooms.mddapi.model.Post;
 import com.openclassrooms.mddapi.repository.PostRepository;
+
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,6 +18,7 @@ import java.util.List;
  * des méthodes spécifiques comme la récupération des posts par auteur, par sujet,
  * ou pour le fil d'actualité d'un utilisateur.
  */
+@Slf4j
 @Service
 public class PostServiceImpl implements PostService {
     
@@ -52,14 +57,13 @@ public class PostServiceImpl implements PostService {
      */
     public List<Post> getAllPosts() {
         try {
-            System.out.println("Tentative de récupération de tous les posts");
+            log.info("Tentative de récupération de tous les posts");
             List<Post> posts = postRepository.findAll();
-            System.out.println("Nombre de posts trouvés : " + posts.size());
-            posts.forEach(post -> System.out.println("Post trouvé : " + post.getId() + " - " + post.getTitle()));
+            log.info("Nombre de posts trouvés : {}", posts.size());
+            posts.forEach(post -> log.debug("Post trouvé : id={}, titre={}", post.getId(), post.getTitle()));
             return posts;
         } catch (Exception e) {
-            System.err.println("Erreur lors de la récupération des posts : " + e.getMessage());
-            e.printStackTrace();
+            log.error("Erreur lors de la récupération des posts : {}", e.getMessage(), e);
             throw e;
         }
     }

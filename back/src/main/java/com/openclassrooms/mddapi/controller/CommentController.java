@@ -1,6 +1,7 @@
 package com.openclassrooms.mddapi.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -17,14 +18,15 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/comments")
 @CrossOrigin 
+@RequiredArgsConstructor
 @Api(tags = "Comment Controller", description = "Opérations liées aux commentaires")
 public class CommentController {
 
-    @Autowired
-    private CommentService commentService;
+    private final CommentService commentService;
 
     @PostMapping("/post/{postId}")
     @ApiOperation(value = "Ajouter un commentaire à un post", notes = "Ajoute un nouveau commentaire à un post existant")
@@ -43,13 +45,18 @@ public class CommentController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
             .getAuthentication().getPrincipal();
         
-        // Initialisation du commentaire
-        commentDTO.setAuthorId(userDetails.getId());
-        commentDTO.setDate(LocalDateTime.now());
+        // Utilisation du Builder pattern de Lombok
+        CommentDTO newComment = CommentDTO.builder()
+            .content(commentDTO.getContent())
+            .authorId(userDetails.getId())
+            .date(LocalDateTime.now())
+            .postId(postId)
+            .build();
 
         // Création du commentaire
-        CommentDTO createdComment = commentService.createComment(postId, commentDTO);
+        CommentDTO createdComment = commentService.createComment(postId, newComment);
         
+        log.info("Commentaire créé avec succès : id={}", createdComment.getId());
         return ResponseEntity.ok(createdComment);
     }
 
@@ -63,10 +70,11 @@ public class CommentController {
     public ResponseEntity<List<CommentDTO>> getCommentsByPost(
             @ApiParam(value = "ID du post dont on veut récupérer les commentaires", required = true) 
             @PathVariable Long postId) {
-        return ResponseEntity.ok(commentService.getCommentsByPost(postId));
+        List<CommentDTO> comments = commentService.getCommentsByPost(postId);
+        log.debug("Récupération de {} commentaires pour le post id={}", comments.size(), postId);
+        return ResponseEntity.ok(comments);
     }
 
-    // Bon à faire, même si pas présent dans le MVP
     @PutMapping("/{commentId}")
     @ApiOperation(value = "Mettre à jour un commentaire", notes = "Met à jour un commentaire existant (uniquement par son auteur)")
     @ApiResponses(value = {
@@ -86,12 +94,24 @@ public class CommentController {
             
         CommentDTO existingComment = commentService.getCommentById(commentId);
         if (!existingComment.getAuthorId().equals(userDetails.getId())) {
+            log.warn("Tentative non autorisée de modification du commentaire : id={}, userId={}", 
+                     commentId, userDetails.getId());
             return ResponseEntity.badRequest().body("Not authorized to update this comment");
         }
 
-        // Met à jour le commentaire
-        CommentDTO updatedComment = commentService.updateComment(commentId, commentDTO);
+        // Mise à jour avec le builder
+        CommentDTO toUpdate = CommentDTO.builder()
+            .id(commentId)
+            .content(commentDTO.getContent())
+            .authorId(existingComment.getAuthorId())
+            .authorUsername(existingComment.getAuthorUsername())
+            .date(existingComment.getDate())
+            .postId(existingComment.getPostId())
+            .build();
+
+        CommentDTO updatedComment = commentService.updateComment(commentId, toUpdate);
         
+        log.info("Commentaire mis à jour avec succès : id={}", updatedComment.getId());
         return ResponseEntity.ok(updatedComment);
     }
 
@@ -111,11 +131,13 @@ public class CommentController {
             
         CommentDTO comment = commentService.getCommentById(commentId);
         if (!comment.getAuthorId().equals(userDetails.getId())) {
+            log.warn("Tentative non autorisée de suppression du commentaire : id={}, userId={}", 
+                     commentId, userDetails.getId());
             return ResponseEntity.badRequest().body("Not authorized to delete this comment");
         }
         
-        // Suppression du commentaire
         commentService.deleteComment(commentId);
+        log.info("Commentaire supprimé avec succès : id={}", commentId);
         return ResponseEntity.ok().build();
     }
 }

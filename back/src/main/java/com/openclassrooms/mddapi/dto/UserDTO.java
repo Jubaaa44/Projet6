@@ -1,11 +1,19 @@
 package com.openclassrooms.mddapi.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @ApiModel(description = "Objet de transfert de données pour les utilisateurs")
 public class UserDTO {
     @ApiModelProperty(notes = "Identifiant unique de l'utilisateur", example = "1")
