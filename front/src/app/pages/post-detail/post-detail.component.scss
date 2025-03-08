@@ -7,7 +7,7 @@
   overflow-x: hidden;
 }
 
-// Header
+// Header styling
 .articles-header {
   display: flex;
   align-items: center;
@@ -25,15 +25,9 @@
     }
   }
 
-  .header-right {
+  .nav-profile-container {
     display: flex;
     align-items: center;
-    gap: 2rem;
-  }
-
-  .navigation {
-    display: flex;
-    gap: 2rem;
 
     .nav-link {
       text-decoration: none;
@@ -41,6 +35,7 @@
       font-size: 1rem;
       font-weight: 500;
       padding: 0.5rem 0;
+      margin-right: 1.5rem;
       position: relative;
 
       &.active {
@@ -121,8 +116,8 @@
   transition: opacity 0.3s ease;
 
   &.active {
-    display: block;
     opacity: 1;
+    display: block;
   }
 }
 
@@ -139,8 +134,8 @@
   box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
 
   &.active {
-    display: block;
     right: 0;
+    display: block;
   }
 
   .mobile-menu-header {
@@ -161,6 +156,8 @@
   .mobile-navigation {
     display: flex;
     flex-direction: column;
+    height: calc(100vh - 60px);
+    position: relative;
     padding: 1.5rem 1rem;
 
     .nav-link {
@@ -181,11 +178,14 @@
     }
 
     .mobile-profile-icon {
-      margin-top: auto;
+      position: absolute;
+      bottom: 60px;
+      right: 20px;
+      margin: 0;
+      padding: 0;
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -201,12 +201,34 @@
   }
 }
 
-// Content
+// Nouveau wrapper pour le contenu et la flèche
+.post-detail-wrapper {
+  position: relative;
+  padding-top: 2rem;
+}
+
+// Contenu
 .content-container {
   padding: 2rem;
-  max-width: 800px;
+  max-width: 700px;
   margin: 0 auto;
   width: 100%;
+  box-sizing: border-box;
+}
+
+// Bouton retour - utilisation du style similaire à create-post
+.back-button {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  text-decoration: none;
+  color: #333;
+  font-size: 1.5rem;
+  line-height: 1;
+
+  &:hover {
+    color: #6C63FF;
+  }
 }
 
 // Loading
@@ -256,28 +278,10 @@
 }
 
 // Post content
-.back-title {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-
-  .back-button {
-    text-decoration: none;
-    color: #333;
-    font-size: 1.5rem;
-    line-height: 1;
-
-    &:hover {
-      color: #6C63FF;
-    }
-  }
-
-  .post-title {
-    font-size: 1.5rem;
-    margin: 0;
-    color: #333;
-  }
+.post-title {
+  font-size: 1.5rem;
+  margin: 0 0 1.5rem 0;
+  color: #333;
 }
 
 .post-meta {
@@ -307,19 +311,38 @@
 .comments-list {
   margin-bottom: 2rem;
 
+  .comment-container {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    gap: 1rem;
+    position: relative;
+  }
+
+  .comment-username {
+    font-weight: 500;
+    color: #333;
+    font-size: 0.9rem;
+
+    &.desktop-username {
+      min-width: 100px;
+      text-align: right;
+      padding-top: 1rem;
+    }
+
+    &.mobile-username {
+      display: none;
+      text-align: right;
+      font-size: 0.85rem;
+    }
+  }
+
   .comment {
     background-color: white;
     border-radius: 8px;
     padding: 1rem;
-    margin-bottom: 1rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-
-    .comment-username {
-      font-weight: 500;
-      color: #333;
-      margin-bottom: 0.5rem;
-      display: block;
-    }
+    flex: 1;
 
     .comment-content {
       color: #666;
@@ -402,7 +425,7 @@
   .articles-header {
     padding: 0.5rem 1rem;
 
-    .header-right {
+    .nav-profile-container {
       display: none;
     }
 
@@ -416,18 +439,45 @@
   }
 
   .content-container {
-    padding: 1rem;
+    padding: 1.5rem;
+    max-width: 90%;
   }
 
-  .back-title {
-    .post-title {
-      font-size: 1.2rem;
-    }
+  .back-button {
+    top: 1.5rem;
+    left: 1.5rem;
+    font-size: 1.25rem;
+  }
+
+  .post-title {
+    font-size: 1.2rem;
   }
 
   .post-meta {
     flex-direction: column;
     gap: 0.5rem;
+  }
+
+  .comments-list {
+    .comment-container {
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .comment-username {
+      &.desktop-username {
+        display: none;
+      }
+
+      &.mobile-username {
+        display: block;
+        position: absolute;
+        bottom: -1.5rem;
+        right: 0;
+        font-size: 0.85rem;
+      }
+    }
   }
 
   .comment-form {
@@ -442,11 +492,25 @@
       bottom: 1rem;
     }
   }
+
+  .mobile-menu-overlay.active {
+    display: block;
+  }
+
+  .mobile-menu.active {
+    display: block;
+  }
 }
 
 @media screen and (max-width: 480px) {
   .content-container {
-    padding: 0.75rem;
+    padding: 1rem;
+    max-width: 90%;
+  }
+
+  .back-button {
+    top: 1rem;
+    left: 1rem;
   }
 
   .post-content {
